@@ -1,5 +1,6 @@
+import { printLog } from "../log";
 import type { Context } from ".";
-import { arrayEqual } from "../lib/util";
+import { writeFileSync } from "node:fs";
 
 export const callStack: StackFrame[] = [];
 export const graph: GraphEvent[] = [];
@@ -24,6 +25,7 @@ export interface GraphEvent {
 }
 
 export function start() {
+  printLog("VM", "Started profiler");
   profilerEnabled = true;
 }
 
@@ -79,16 +81,24 @@ export function createProfiler(ctx: Context) {
   return profiler;
 }
 
-export function exportFlameGraph() {
+type GraphKey = "count" | "duration";
+
+/** Use https://speedscope.app/ for viewing the graph */
+export function getFlameGraph(key: GraphKey = "count") {
   return graph
-    // .filter((x) => x.count >= 1)
+    .filter((x) => x.duration > 0)
     .sort((a, b) => a.start - b.start)
     .map((x) => (
       `${x.id};${
         x.stack.length > 0
           ? x.stack.join(";") + ";"
           : ""
-      }${x.label} ${x.count}`
+      }${x.label} ${Math.round(x[key])}`
     ))
     .join("\n");
+}
+
+/** Use https://speedscope.app/ for viewing the graph */
+export function exportFlameGraph(file: string, key?: GraphKey) {
+  writeFileSync(file, getFlameGraph(key));
 }

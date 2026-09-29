@@ -25,6 +25,14 @@ export function initHooks() {
   
   postHook("OnMagicNumbersAndWorldSeedInitialized", () => {
     // TODO: does this run before or after this hook? or somewhere else entirely?
+
+    // Update: my assumption would be that this has to run after OnMagicNumbers
+    //         because that's the very first point where mods can
+    //         grab the path to the biome map and add appends
+    // (plus this hasn't broken so far)
+    // (...i should just test shit)
+    // (...except that i'm too lazy to even open the game)
+
     if (config.enableBiomeMap) {
       loadBiomeMap();
     }

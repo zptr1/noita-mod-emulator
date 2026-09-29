@@ -35,14 +35,6 @@ export function isDir(path: string) {
   return existsSync(path) && statSync(path).isDirectory();
 }
 
-export function arrayEqual(a: any[], b: any[]) {
-  if (a.length != b.length) return;
-  for (let i = 0; i < a.length; i++) {
-    if (a[i] != b[i]) return;
-  }
-  return true;
-}
-
 export function tryFindDir(list: string[]) {
   for (let path of list) {
     if (path.startsWith("~")) {
