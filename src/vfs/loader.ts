@@ -1,5 +1,6 @@
-import { fileBlame, files, NULL, resolvePath, unreadFiles } from "./files";
+import { fileBlame, files, NULL, unreadFiles } from "./files";
 import { readdirSync, readFileSync } from "node:fs";
+import { resolvePath } from "../lib/util";
 import { printLog } from "../log";
 import cl from "chalk";
 

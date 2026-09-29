@@ -1,5 +1,6 @@
 import { IMAGE_FILE_MAP, IMAGE_FILES, makeImageEditable } from "../lib/img";
-import { fileExists, resolvePath } from "../vfs";
+import { resolvePath } from "../lib/util";
+import { fileExists } from "../vfs";
 import { Context } from "../context";
 import { config } from "../config";
 

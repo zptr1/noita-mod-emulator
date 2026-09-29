@@ -1,4 +1,5 @@
 import { tryFindGameDir, tryFindWorkshopDir } from "./lib/util";
+import { LuaLibName } from "lua-state";
 
 export const config = {
   worldSeed: 0,
@@ -7,6 +8,8 @@ export const config = {
   enableImageEditing: true,
   enableLocalization: true,
   enableBiomeMap: true,
+
+  luaLibs: ["base", "string", "table", "math", "utf8", "bit32"] as LuaLibName[],
 };
 
 export function setConfig(newConfig: Partial<typeof config>) {

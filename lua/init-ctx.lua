@@ -1,4 +1,6 @@
 ---@diagnostic disable: deprecated, undefined-global
+-- This is ran at the start of each lua context
+
 __loaded = {}
 __loadonce = {}
 

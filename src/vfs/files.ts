@@ -1,3 +1,4 @@
+import { resolvePath } from "../lib/util";
 import { LOCALE_PATH } from "../const";
 import { LOCALE } from "../storage";
 import { readFileSync } from "fs";
@@ -5,21 +6,9 @@ import { readFileSync } from "fs";
 export const files = new Map<string, Buffer>();
 export const strFiles = new Map<string, string>();
 export const unreadFiles = new Map<string, string>();
-
 export const fileBlame = new Map<string, string>();
 
 export const NULL = Buffer.alloc(0);
-
-export function resolvePath(path: string) {
-  if (path[0] == "/") path = path.slice(1);
-
-  const parts = path.split("/");
-  if (parts[0] == "mods" && parts[2] == "data") {
-    return parts.slice(2).join("/").toLowerCase();
-  }
-
-  return path.toLowerCase();
-}
 
 export function getFile(path: string) {
   const file = resolvePath(path);

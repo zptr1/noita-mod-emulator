@@ -1,9 +1,10 @@
-import { arrayToLua } from "./lib/util";
-import { resolvePath } from "./vfs";
+import { arrayToLua, resolvePath } from "./lib/util";
+import { join as pjoin } from "node:path";
 
 // This goes into a mod setting, a persistent flag, a run flag, and an enabled mod,
 // so that mods can detect if they're being emulated by checking any of these
 export const EMULATOR = "NOITA_EMULATOR";
+export const EMULATOR_PATH = pjoin(import.meta.dirname, "../");
 
 // All lua hook names in their call order
 export const LUA_HOOKS = [

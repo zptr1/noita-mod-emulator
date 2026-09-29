@@ -1,18 +1,18 @@
+import { createProfiler, Profiler, profilerEnabled } from "./perf";
 import { LuaFunction, LuaState } from "lua-state";
-import { readFileSync } from "node:fs";
+import { getLuaScript } from "../lib/util";
 import { luaBitLib } from "../lib/bit";
-import { join as pjoin } from "path";
 import { config } from "../config";
 import * as API from "../api";
 
-const LUA_INIT = readFileSync(pjoin(import.meta.dirname, "init.lua"), "utf8");
+const LUA_INIT = getLuaScript("init-ctx.lua");
+const LUA_INIT_PERF = getLuaScript("init-perf.lua");
 
 export class Context {
-  public readonly lua = new LuaState({
-    libs: ["base", "string", "table", "math", "utf8", "bit32"]
-  });
+  public readonly lua = new LuaState({ libs: config.luaLibs });
 
-  public readonly execCache = new Map<string, any>();
+  private readonly definedGlobals = new Set<string>();
+  private profiler?: Profiler;
 
   public readonly dofile: LuaFunction;
   public readonly dofileOnce: LuaFunction;
@@ -20,8 +20,8 @@ export class Context {
   constructor(
     public readonly id: string = "?",
   ) {
-    this.initGlobals();
     this.lua.eval(LUA_INIT);
+    this.initProfiler();
 
     this.dofile = this.lua.getGlobal("dofile") as any;
     this.dofileOnce = this.lua.getGlobal("dofile_once") as any;
@@ -29,14 +29,25 @@ export class Context {
     if (typeof this.dofile != "function" || typeof this.dofileOnce != "function") {
       throw new Error("Context failed to initialize: missing dofile function(s)");
     }
+
+    this.initGlobals();
+  }
+
+  private initProfiler() {
+    if (!profilerEnabled) return;
+
+    this.profiler = createProfiler(this);
+    this.lua.eval(LUA_INIT_PERF);
+    this.lua.setGlobal("__perf_begin", this.profiler.begin as any);
+    this.lua.setGlobal("__perf_end", this.profiler.end as any);
   }
 
   private initGlobals() {
     for (const key in API) {
-      if (key.startsWith("$")) continue;
+      if (key[0] == "$") continue;
       if (key.startsWith("ctx$")) {
         const fn = API[key];
-        const fname = key.replace("ctx$", "");
+        const fname = key.slice(4);
 
         this.setGlobal(fname, (...args: any[]) => fn(this, ...args));
       } else {
@@ -54,19 +65,18 @@ export class Context {
     this.setGlobal("__emulatorSettings", config);
   }
 
-  private readonly definedGlobals = new Set<string>();
   setGlobal(name: string, value: any) {
     if (this.definedGlobals.has(name)) throw new Error(`Global ${name} is already defined`);
     this.definedGlobals.add(name);
 
-    // TODO use this for debugging performance
-    // if (typeof value == "function") {
-    //   this.lua.setGlobal(name, (...args: any[]) => {
-    //     console.log(name, args);
-    //     return value(...args);
-    //   })
-    // } else {
-    // }
+    if (typeof value == "function" && this.profiler && name[0] != "_") {
+      const label = `${name}()`;
+      this.lua.setGlobal(name, (...args: any[]) => {
+        return this.profiler!.profile(label, value, ...args);
+      });
+
+      return;
+    }
 
     this.lua.setGlobal(name, value);
   }
@@ -100,7 +110,12 @@ export class Context {
     const func = this.lua.getGlobal(name);
     if (typeof func != "function") return false;
 
-    func(...args);
+    if (this.profiler) {
+      this.profiler.profile(`hook:${name}()`, func, ...args);
+    } else {
+      func(...args);
+    }
+
     return true;
   }
 }

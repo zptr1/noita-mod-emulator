@@ -1,5 +1,18 @@
-import { existsSync, statSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import { join as pjoin } from "node:path";
+import { EMULATOR_PATH } from "../const";
+
+// Moved from vfs/files.ts to fix circular imports
+export function resolvePath(path: string) {
+  if (path[0] == "/") path = path.slice(1);
+
+  const parts = path.split("/");
+  if (parts[0] == "mods" && parts[2] == "data") {
+    return parts.slice(2).join("/").toLowerCase();
+  }
+
+  return path.toLowerCase();
+}
 
 /*
  * Apparently, returning an array from a function acts as a multi-value return on the Lua side;
@@ -14,8 +27,20 @@ export function arrayToLua<T>(array: T[]): Record<number, T> {
   return table;
 }
 
+export function getLuaScript(path: string) {
+  return readFileSync(pjoin(EMULATOR_PATH, "lua", path), "utf8");
+}
+
 export function isDir(path: string) {
   return existsSync(path) && statSync(path).isDirectory();
+}
+
+export function arrayEqual(a: any[], b: any[]) {
+  if (a.length != b.length) return;
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return;
+  }
+  return true;
 }
 
 export function tryFindDir(list: string[]) {

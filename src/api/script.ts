@@ -1,5 +1,5 @@
-import { fileBlame, fileExists, getFile, resolvePath, setFile } from "../vfs";
-import { arrayToLua } from "../lib/util";
+import { fileBlame, fileExists, getFile, setFile } from "../vfs";
+import { arrayToLua, resolvePath } from "../lib/util";
 import { LUA_APPENDS } from "../storage";
 import { Context } from "../context";
 import { printDebug } from "../log";

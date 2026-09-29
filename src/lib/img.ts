@@ -1,4 +1,5 @@
-import { getFileBinary, resolvePath } from "../vfs";
+import { getFileBinary } from "../vfs";
+import { resolvePath } from "./util";
 import { PNG } from "pngjs";
 import sharp from "sharp";
 
