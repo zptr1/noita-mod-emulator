@@ -1,0 +1,9 @@
+import cl from "chalk";
+
+export function printLog(thing: string, ...text: any[]) {
+  console.log(cl.blue(`[${thing}]`), ...text);
+}
+
+export function printDebug(thing: string, ...text: any[]) {
+  console.log(cl.gray(`[${thing}]`), ...text);
+}

@@ -1,0 +1,65 @@
+import { fileBlame, fileExists, getFile, resolvePath, setFile } from "../vfs";
+import { arrayToLua } from "../lib/util";
+import { LUA_APPENDS } from "../storage";
+import { Context } from "../context";
+
+export const __normalize_path = resolvePath;
+
+export function ctx$ModTextFileSetContent(ctx: Context, path: string, content: string) {
+  path = resolvePath(path);
+  setFile(path, content, ctx.id);
+}
+  
+export const ModTextFileGetContent = (path: string) => getFile(path);
+export const ModDoesFileExist = (path: string) => fileExists(path);
+
+export function ModTextFileWhoSetContent(path: string) {
+  return fileBlame.get(resolvePath(path)) || "";
+}
+
+export function ctx$do_mod_appends(ctx: Context, path: string) {
+  const appends = LUA_APPENDS.get(resolvePath(path));
+  if (!appends) return;
+
+  for (const append of appends) {
+    ctx.dofile(append);
+  }
+}
+
+export function ModLuaFileAppend(path: string, script: string) {
+  path = resolvePath(path);
+  script = resolvePath(script);
+
+  if (!LUA_APPENDS.has(path)) {
+    LUA_APPENDS.set(path, new Set());
+  }
+
+  LUA_APPENDS.get(path)!.add(script);
+}
+
+export function ModLuaFileSetAppends(path: string, appends: string[]) {
+  LUA_APPENDS.set(resolvePath(path), new Set(appends.map(resolvePath)));
+}
+
+export function ModLuaFileGetAppends(path: string) {
+  const appends = LUA_APPENDS.get(resolvePath(path));
+  if (!appends) return {};
+  return arrayToLua([...appends]);
+}
+
+export function SetTimeOut(delay: number, path: string, fname?: string) {
+  const timeCtx = new Context();
+
+  console.log(`[LUA] Scheduled ${path} in ${delay}s`);
+
+  setTimeout(() => {
+    timeCtx.dofile(path);
+    if (fname) {
+      const fn = timeCtx.lua.getGlobal(fname);
+
+      if (typeof fn == "function") {
+        fn();
+      }
+    }
+  }, delay * 1000);
+}

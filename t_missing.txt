@@ -1,0 +1,147 @@
+Missing OnPlayerSpawned
+Missing OnPlayerDied
+Missing OnMagicNumbersAndWorldSeedInitialized
+Missing OnBiomeConfigLoaded
+Missing OnWorldInitialized
+Missing OnWorldPreUpdate
+Missing OnWorldPostUpdate
+Missing OnPausedChanged
+Missing OnModPreInit
+Missing OnModInit
+Missing OnModPostInit
+Missing OnModSettingsChanged
+Missing OnPausePreUpdate
+Missing OnCountSecrets
+
+Missing damage_received
+Missing damage_about_to_be_received
+Missing item_pickup
+Missing shot
+Missing collision_trigger
+Missing collision_trigger_timer_finished
+Missing physics_body_modified
+Missing pressure_plate_change
+Missing inhaled_material
+Missing death
+Missing throw_item
+Missing material_area_checker_failed
+Missing material_area_checker_success
+Missing electricity_receiver_switched
+Missing electricity_receiver_electrified
+Missing kick
+Missing interacting
+Missing audio_event_dead
+Missing wand_fired
+Missing teleported
+Missing portal_teleport_used
+Missing polymorphing_to
+Missing biome_entered
+
+Missing ____cached_func
+
+Missing Reflection_RegisterProjectile
+Missing RegisterPerk
+Missing GameRegisterStatusEffect
+Missing RegisterStreamingEvent
+Missing _ConfigGunActionInfo_ReadToGame
+
+------------------------
+
+TODO separately
+
+Missing BiomeMapLoad
+Missing DEBUG_MARK
+
+Missing ModMaterialFilesGet
+Missing ModLuaFileGetAppends
+Missing ModLuaFileSetAppends
+
+Missing ModImageIdFromFilename
+Missing ModImageGetPixel
+Missing ModImageSetPixel
+Missing ModImageWhoSetContent
+Missing ModImageDoesExist
+
+Missing ModRegisterMusicBank
+
+--
+available only if biome map in magic numbers points to a lua file 
+Missing BiomeMapSetSize
+Missing BiomeMapGetSize
+Missing BiomeMapSetPixel
+Missing BiomeMapGetPixel
+Missing BiomeMapConvertPixelFromUintToInt
+Missing BiomeMapLoadImage
+Missing BiomeMapLoadImageCropped
+
+------------------------
+Missing DEBUG_GameReset
+Missing ComponentSetValueVector2
+Missing ComponentSetValueValueRange
+Missing ComponentSetValueValueRangeInt
+Missing ComponentSetMetaCustom
+Missing ComponentObjectSetValue
+Missing ComponentGetValueBool
+Missing ComponentGetValueInt
+Missing ComponentGetValueFloat
+Missing ComponentGetValueVector2
+Missing ComponentGetMetaCustom
+Missing ComponentObjectGetValue
+Missing EntityRemoveStainStatusEffect
+Missing EntityGetHotspot
+Missing GameGetSkyVisibility
+Missing GameGetFogOfWar
+Missing GameGetFogOfWarBilinear
+Missing GameSetFogOfWar
+Missing GenomeSetHerdId
+Missing InputIsJoystickButtonDown
+Missing InputIsJoystickButtonJustDown
+Missing InputIsJoystickConnected
+Missing InputGetJoystickAnalogButton
+Missing InputGetJoystickAnalogStick
+Missing PhysicsComponentGetTransform
+Missing PhysicsComponentSetTransform
+Missing PhysicsBodyIDGetFromEntity
+Missing PhysicsBodyIDQueryBodies
+Missing PhysicsBodyIDGetTransform
+Missing PhysicsBodyIDSetTransform
+Missing PhysicsBodyIDApplyForce
+Missing PhysicsBodyIDApplyLinearImpulse
+Missing PhysicsBodyIDApplyTorque
+Missing PhysicsBodyIDSetDamping
+Missing PhysicsBodyIDSetGravityScale
+Missing PhysicsPosToGamePos
+Missing GamePosToPhysicsPos
+Missing PhysicsBodyIDGetWorldCenter
+Missing PhysicsBodyIDGetDamping
+Missing PhysicsBodyIDGetBodyAABB
+Missing PhysicsBodyIDGetGravityScale
+Missing VerletApplyCircularForce
+Missing VerletApplyDirectionalForce
+Missing GameSetPostFxTextureParameter
+Missing GameUnsetPostFxTextureParameter
+Missing GuiTextCentered
+Missing GuiButton
+Missing ModTextFileWhoSetContent
+
+------------------------
+
+Missing RegisterProjectile
+Missing RegisterGunAction
+Missing RegisterGunShotEffects
+Missing BeginProjectile
+Missing EndProjectile
+Missing BeginTriggerTimer
+Missing BeginTriggerHitWorld
+Missing BeginTriggerDeath
+Missing EndTrigger
+Missing SetProjectileConfigs
+Missing StartReload
+Missing ActionUsesRemainingChanged
+Missing ActionUsed
+Missing LogAction
+Missing OnActionPlayed
+Missing OnNotEnoughManaForAction
+Missing BaabInstruction
+Missing dofile
+Missing dofile_once
