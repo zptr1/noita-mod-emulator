@@ -1,7 +1,8 @@
 import { LuaFunction, LuaState } from "lua-state";
+import { readFileSync } from "node:fs";
 import { luaBitLib } from "../lib/bit";
 import { join as pjoin } from "path";
-import { readFileSync } from "fs";
+import { config } from "../config";
 import * as API from "../api";
 
 const LUA_INIT = readFileSync(pjoin(import.meta.dirname, "init.lua"), "utf8");
@@ -48,35 +49,49 @@ export class Context {
         this.setGlobal(fname, fn);
       }
     }
-    
+
     this.setGlobal("bit", luaBitLib);
+    this.setGlobal("__emulatorSettings", config);
   }
 
   private readonly definedGlobals = new Set<string>();
   setGlobal(name: string, value: any) {
     if (this.definedGlobals.has(name)) throw new Error(`Global ${name} is already defined`);
-    this.lua.setGlobal(name, value);
     this.definedGlobals.add(name);
+
+    // TODO use this for debugging performance
+    // if (typeof value == "function") {
+    //   this.lua.setGlobal(name, (...args: any[]) => {
+    //     console.log(name, args);
+    //     return value(...args);
+    //   })
+    // } else {
+    // }
+
+    this.lua.setGlobal(name, value);
   }
 
-  execFile(file: string) {
+  execFile(file: string, once = true) {
     try {
-      return this.dofileOnce(file);
+      return once 
+        ? this.dofileOnce(file)
+        : this.dofile(file);
     } catch (err) {
       console.error(err.toString());
     }
   }
 
   execFileWithAPI(file: string, api: Record<string, any>) {
-    for (const key in api) {
-      this.setGlobal(key, api[key]);
-    }
-
     try {
-      return this.execFile(file);
+      for (const key in api) {
+        this.setGlobal(key, api[key]);
+      }
+
+      return this.execFile(file, false);
     } finally {
       for (const key in api) {
         this.lua.setGlobal(key, null);
+        this.definedGlobals.delete(key);
       }
     }
   }

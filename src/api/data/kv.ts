@@ -1,5 +1,6 @@
 import { BOOL_VALUES, GAME_FLAGS, GLOBALS, INT_VALUES, NUMBER_VALUES, PERSISTENT_FLAGS, SESSION_NUMBERS } from "../../storage";
 import { DEFAULT_STATS } from "../../const";
+import { config } from "../../config";
 
 export const HasFlagPersistent = (flag: string) => PERSISTENT_FLAGS.has(flag);
 export const RemoveFlagPersistent = (flag: string) => void PERSISTENT_FLAGS.delete(flag);
@@ -28,9 +29,13 @@ export const GetValueInteger = (key: string, def: number) => INT_VALUES.get(key)
 export const SetValueBool = (key: string, value: boolean) => void BOOL_VALUES.set(key, value);
 export const GetValueBool = (key: string, def: boolean) => BOOL_VALUES.get(key) ?? def;
 
-export const StatsGetValue = (key: string) => DEFAULT_STATS[key] ?? "";
-export const StatsGlobalGetValue = (key: string) => DEFAULT_STATS[key] ?? "";
-export const StatsBiomeGetValue = (key: string) => DEFAULT_STATS[key] ?? "";
+export function StatsGetValue(key: string) {
+  if (key == "world_seed") return config.worldSeed;
+  return DEFAULT_STATS[key] ?? "";
+}
+
+export const StatsGlobalGetValue = StatsGetValue;
+export const StatsBiomeGetValue = StatsGetValue;
 
 export const SessionNumbersGetValue = (key: string) => SESSION_NUMBERS.get(key) || "";
 export function SessionNumbersSetValue(key: string, value: string) {

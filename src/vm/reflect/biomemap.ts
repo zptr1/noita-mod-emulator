@@ -1,6 +1,6 @@
 import { Img, loadImage, putImage, swap32 } from "../../lib/img";
-import { MAGIC_NUMBERS } from "../../storage";
-import { getFileBinary } from "../../vfs";
+import { MAGIC_NUMBERS, SESSION_NUMBERS } from "../../storage";
+import { getFileBinary, resolvePath } from "../../vfs";
 import { Context } from "../../context";
 import { printLog } from "../../log";
 
@@ -18,7 +18,7 @@ export function loadBiomeMap() {
     return;
   }
 
-  biomeMapFile = file;
+  biomeMapFile = resolvePath(file);
 
   if (file.endsWith(".lua")) {
     generateBiomeMap(file);
@@ -31,7 +31,10 @@ export function loadBiomeMap() {
     }
   }
 
-  printLog("Reflect", `Loaded a ${biomeMap.width}x${biomeMap.height} biome map from ${file}`);
+  printLog("Reflect", `Loaded a ${biomeMap.width}x${biomeMap.height} biome map from ${biomeMapFile}`);
+
+  SESSION_NUMBERS.set("is_biome_map_initialized", "true");
+  SESSION_NUMBERS.set("BIOME_MAP", biomeMapFile);
 }
 
 export function generateBiomeMap(file: string) {

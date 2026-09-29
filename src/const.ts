@@ -1,14 +1,9 @@
 import { arrayToLua } from "./lib/util";
 import { resolvePath } from "./vfs";
 
-export const CONFIG = {
-  worldSeed: 0,
-  enableImageEditing: true,
-}
-
 // This goes into a mod setting, a persistent flag, a run flag, and an enabled mod,
 // so that mods can detect if they're being emulated by checking any of these
-export const MY_NAME = "NOITA_EMULATOR";
+export const EMULATOR = "NOITA_EMULATOR";
 
 // All lua hook names in their call order
 export const LUA_HOOKS = [
@@ -34,14 +29,13 @@ export const DEFAULT_SESSION_NUMBERS = {
   "DESIGN_NEW_GAME_PLUS_HP_SCALE_MIN": "1",
   "DESIGN_NEW_GAME_PLUS_HP_SCALE_MAX": "1",
   "DESIGN_NEW_GAME_PLUS_ATTACK_SPEED": "1",
-};
+} as const;
 
 // Taken from noita wiki
 export const DEFAULT_STATS = {
   "dead": false,
   "death_count": 0,
   "streaks": 0,
-  "world_seed": CONFIG.worldSeed,
   "killed_by": "ur mom",
   "killed_by_extra": "",
   "playtime": 0,
@@ -62,19 +56,11 @@ export const DEFAULT_STATS = {
   "wands_edited": 0,
   "biomes_visited_with_wands": 0,
   "death_pos": arrayToLua([0, 0]),
-};
+} as const;
 
 export const DEFAULT_GLOBALS = {
   "NEW_GAME_PLUS_ITERATION": "0",
-};
-
-// Files matching this regex will get loaded as utf8 text
-// Any other file is loaded as an empty string
-export const RE_TEXT_FILE = /\.(txt|lua|xml|csv|frag)$/;
-
-// Files matching this regex will get loaded into a separate map of raw image buffers
-// which can then get used in Lua API to edit them
-export const RE_IMAGE_FILE = /\.(png|jpe?g)$/;
+} as const;
 
 // Writing to this file will reset the loaded locale (if its loaded)
 // so the next GameTextGet/GameTextGetTranslatedOrNot is up to date

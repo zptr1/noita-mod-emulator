@@ -1,6 +1,6 @@
 import * as API from "./src/api";
 import { Context } from "./src/context";
-import { readFileSync } from "fs";
+import { readFileSync } from "node:fs";
 
 const s = new Set(readFileSync("tmp.txt", "utf8").split("\n"));
 const blank = new Set(API.$blankFunctions.map((x) => x.list).flat());

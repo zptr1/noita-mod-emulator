@@ -1,10 +1,9 @@
 import { LUA_HOOKS, LuaHook } from "../const";
-import { fileExists, getFile } from "../vfs";
-import { gameCtx, mods } from "./loader";
+import { gameCtx, activeMods } from "./loader";
 import { Context } from "../context";
+import { fileExists } from "../vfs";
 import { printLog } from "../log";
-import * as API from "../api";
-import { loadBiomeMap } from "./reflect/biomemap";
+import { initHooks } from "./hooks";
 
 const hookPreCallbacks = new Map<LuaHook, Function[]>();
 const hookPostCallbacks = new Map<LuaHook, Function[]>();
@@ -22,7 +21,7 @@ export function runHook(hook: LuaHook, ...args: any[]) {
   for (const cb of pre) cb(...args);
   
   gameCtx.runHook(hook, ...args);
-  for (const mod of mods) {
+  for (const mod of activeMods) {
     mod.ctx.runHook(hook, ...args);
   }
   
@@ -30,10 +29,15 @@ export function runHook(hook: LuaHook, ...args: any[]) {
   for (const cb of post) cb(...args);
 }
 
-export function run() {
-  printLog("Runner", `Running mod's settings.lua`);
+let ranSettings = false;
 
-  for (const mod of mods) {
+export function runSettings() {
+  if (ranSettings) return;
+
+  ranSettings = true;
+  printLog("VM", `Running mod's settings.lua`);
+
+  for (const mod of activeMods) {
     const path = `${mod.path}/settings.lua`;
     if (!fileExists(path)) continue;
   
@@ -47,9 +51,14 @@ export function run() {
       return;
     }
   }
+}
+
+export function run() {
+  initHooks();
+  runSettings();
 
   for (const hook of LUA_HOOKS) {
-    printLog("Runner", "Running hook", hook);
+    printLog("VM", "Running hook", hook);
     try {
       runHook(hook);
     } catch (err) {
@@ -58,21 +67,3 @@ export function run() {
     }
   }
 }
-
-preHook("OnModPreInit", () => {
-  API.ModMagicNumbersFileAdd("data/magic_numbers.xml");
-  gameCtx.execFile("data/scripts/init.lua");
-
-  for (const mod of mods) {
-    mod.ctx.execFile(`${mod.path}/init.lua`);
-  }
-});
-
-preHook("OnMagicNumbersAndWorldSeedInitialized", () => {
-  API.$loadMagicNumbers();
-});
-
-postHook("OnMagicNumbersAndWorldSeedInitialized", () => {
-  // TODO: does this run before or after? or somewhere else entirely?
-  loadBiomeMap();
-});

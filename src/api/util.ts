@@ -1,18 +1,18 @@
 import { GameTextGetTranslatedOrNot } from "./data/locale";
 import { biomeMap } from "../vm/reflect/biomemap";
-import { modById, mods } from "../vm/loader";
+import { activeModsById, activeMods } from "../vm/loader";
 import { Context } from "../context";
 import { printDebug } from "../log";
-import { MY_NAME } from "../const";
+import { EMULATOR } from "../const";
 import cl from "chalk";
 
 export function ModIsEnabled(id: string) {
-  if (id == MY_NAME) return true;
-  return modById.has(id);
+  if (id == EMULATOR) return true;
+  return activeModsById.has(id);
 }
 
 export function ModGetActiveModIDs() {
-  return mods.map((x) => x.id);
+  return activeMods.map((x) => x.id);
 }
 
 export function print_error(...text: string[]) {

@@ -1,8 +1,7 @@
 import { IMAGE_FILE_MAP, IMAGE_FILES, makeImageEditable } from "../lib/img";
 import { fileExists, resolvePath } from "../vfs";
 import { Context } from "../context";
-import { STATS } from "../storage";
-import { CONFIG } from "../const";
+import { config } from "../config";
 
 const imageBlame = new Map<string, string>();
 
@@ -10,7 +9,7 @@ export function ctx$ModImageMakeEditable(ctx: Context, path: string, width: numb
   path = resolvePath(path);
   imageBlame.set(path, ctx.id);
 
-  if (!CONFIG.enableImageEditing) return [0, 0, 0];
+  if (!config.enableImageEditing) return [0, 0, 0];
 
   const img = makeImageEditable(path, width, height);
   if (!img) return [0, 0, 0];
@@ -19,8 +18,6 @@ export function ctx$ModImageMakeEditable(ctx: Context, path: string, width: numb
 }
 
 export function ModImageIdFromFilename(path: string) {
-  if (!CONFIG.enableImageEditing) return [0, 0, 0];
-
   const img = IMAGE_FILE_MAP.get(path);
   if (!img) return [0, 0, 0];
 
@@ -28,22 +25,16 @@ export function ModImageIdFromFilename(path: string) {
 }
 
 export function ModImageSetPixel(id: number, x: number, y: number, color: number) {
-  if (!CONFIG.enableImageEditing) return;
-
   const img = IMAGE_FILES[id - 1];
   if (!img || y >= img.height || x >= img.width) return;
 
-  STATS.setPixelCalls++;
   img.buffer[y * img.width + x] = color;
 }
 
 export function ModImageGetPixel(id: number, x: number, y: number) {
-  if (!CONFIG.enableImageEditing) return 0;
-
   const img = IMAGE_FILES[id - 1];
   if (!img || y >= img.height || x >= img.width) return 0;
 
-  STATS.getPixelCalls++;
   return img.buffer[y * img.width + x];
 }
 

@@ -1,18 +1,17 @@
 import { NollaPrng } from "../lib/nolla_prng";
 import { printDebug } from "../log";
-import { CONFIG } from "../const";
+import { config } from "../config";
 
-let worldSeed = CONFIG.worldSeed;
-let prng = new NollaPrng();
-let proceduralPrng = new NollaPrng();
+const prng = new NollaPrng();
+const proceduralPrng = new NollaPrng();
 
 export function SetWorldSeed(seed: number) {
-  worldSeed = seed;
-  printDebug("API", "Seed changed to", worldSeed);
+  config.worldSeed = seed;
+  printDebug("API", "Seed changed to", config.worldSeed);
 }
 
 export function SetRandomSeed(x: number, y: number) {
-  prng.SetRandomSeed(worldSeed, x, y);
+  prng.SetRandomSeed(config.worldSeed, x, y);
 }
 
 const scale = (val: number, a?: number, b?: number) => {
@@ -44,7 +43,7 @@ export function ProceduralRandom(x: number, y: number, a?: number, b?: number): 
 }
 
 export function ProceduralRandomf(x: number, y: number, a?: number, b?: number): number {
-  proceduralPrng.SetRandomSeed(worldSeed, x, y);
+  proceduralPrng.SetRandomSeed(config.worldSeed, x, y);
   return scale(proceduralPrng.Next(), a, b);
 }
 
