@@ -1,4 +1,4 @@
-import { Img, loadImage, putImage, saveImageToDisk, swap32 } from "../../img";
+import { Img, loadImage, putImage, swap32 } from "../../lib/img";
 import { MAGIC_NUMBERS } from "../../storage";
 import { getFileBinary } from "../../vfs";
 import { Context } from "../../context";
@@ -9,12 +9,16 @@ export const biomeMap: Img = {
   buffer: new Uint32Array(0)
 };
 
+export let biomeMapFile = "";
+
 export function loadBiomeMap() {
   const file = MAGIC_NUMBERS.get("BIOME_MAP");
   if (typeof file != "string") {
     console.error("Missing BIOME_MAP magic number");
     return;
   }
+
+  biomeMapFile = file;
 
   if (file.endsWith(".lua")) {
     generateBiomeMap(file);
@@ -27,8 +31,7 @@ export function loadBiomeMap() {
     }
   }
 
-  printLog("Reflect", `Loaded a ${biomeMap.width}x${biomeMap.height} biome map`);
-  // saveImageToDisk("biome-map.png", biomeMap);
+  printLog("Reflect", `Loaded a ${biomeMap.width}x${biomeMap.height} biome map from ${file}`);
 }
 
 export function generateBiomeMap(file: string) {

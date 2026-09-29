@@ -1,15 +1,15 @@
 import { getPerks, getSpells, getStatusEffects } from "./src/vm/reflect/data";
-import { load, run } from "./src/vm";
 import { STATS } from "./src/storage";
+import { join as pjoin } from "path";
+import { load, run } from "./src/vm";
 
-const steamapps = "/home/yui/.local/share/Steam/steamapps";
-const modIds = ["2866701037","1975079109","3357618827","3032128572","1974488139","1976795806","1984977713","2012782536","2220664271","2284931352","2554761457","2564551181","2572385079","2572658701","2744309004","2793430913","2817946427","2840072000","3284126816","3299312539","3313573016","3419582553","3440115864","3473790004","3564206563","3636565252","3713134977"];
+const steamapps = pjoin(process.env.HOME!, `.local/share/Steam/steamapps`);
 
 load(
   `${steamapps}/common/Noita/data`,
   // modIds.map((x) => `${steamapps}/workshop/content/881100/${x}`)
   [
-    "/home/yui/.local/share/Steam/steamapps/workshop/content/881100/1985600131"
+    `${steamapps}/workshop/content/881100/1985600131`
   ]
 );
 

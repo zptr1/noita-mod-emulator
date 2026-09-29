@@ -1,4 +1,4 @@
-import { getFileBinary, resolvePath } from "./vfs";
+import { getFileBinary, resolvePath } from "../vfs";
 import { PNG } from "pngjs";
 import sharp from "sharp";
 
@@ -67,6 +67,18 @@ export function makeImageEditable(path: string, width: number, height: number) {
   return img;
 }
 
+export async function saveImageToDisk(realPath: string, img: Img) {
+  const { width, height, buffer } = img;
+  const raw = Buffer.from(buffer.buffer, buffer.byteOffset, buffer.byteLength);
+
+  await sharp(raw, {
+    raw: {
+      width, height,
+      channels: 4
+    }
+  }).png().toFile(realPath);
+}
+
 export function putImage(
   dest: Img, src: Img,
   destX: number, destY: number,
@@ -86,18 +98,6 @@ export function putImage(
       dest.buffer[destOffset + x] = src.buffer[srcOffset + x];
     }
   }
-}
-
-export async function saveImageToDisk(realPath: string, img: Img) {
-  const { width, height, buffer } = img;
-  const raw = Buffer.from(buffer.buffer, buffer.byteOffset, buffer.byteLength);
-
-  await sharp(raw, {
-    raw: {
-      width, height,
-      channels: 4
-    }
-  }).png().toFile(realPath);
 }
 
 // AABBGGRR <-> AARRGGBB

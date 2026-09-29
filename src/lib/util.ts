@@ -8,5 +8,3 @@ export function arrayToLua<T>(array: T[]): Record<number, T> {
 
   return table;
 }
-
-// i should probably move img.ts to here, or to `lib`

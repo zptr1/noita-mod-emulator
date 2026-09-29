@@ -2,6 +2,7 @@ import { fileBlame, fileExists, getFile, resolvePath, setFile } from "../vfs";
 import { arrayToLua } from "../lib/util";
 import { LUA_APPENDS } from "../storage";
 import { Context } from "../context";
+import { printDebug } from "../log";
 
 export const __normalize_path = resolvePath;
 
@@ -47,19 +48,14 @@ export function ModLuaFileGetAppends(path: string) {
   return arrayToLua([...appends]);
 }
 
-export function SetTimeOut(delay: number, path: string, fname?: string) {
-  const timeCtx = new Context();
-
-  console.log(`[LUA] Scheduled ${path} in ${delay}s`);
-
+export function ctx$SetTimeOut(ctx: Context, delay: number, path: string, fname?: string) {
+  printDebug("LUA", `Scheduled ${path} in ${delay}s`);
+  
   setTimeout(() => {
+    const timeCtx = new Context(ctx.id.replace(":timeout", "") + ":timeout");
     timeCtx.dofile(path);
     if (fname) {
-      const fn = timeCtx.lua.getGlobal(fname);
-
-      if (typeof fn == "function") {
-        fn();
-      }
+      timeCtx.runHook(fname);
     }
   }, delay * 1000);
 }
