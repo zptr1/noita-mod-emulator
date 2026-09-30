@@ -50,7 +50,7 @@ feature creep yay
   - Some mods can also have an entity with a `LuaComponent` that runs a script every frame; this might be done later if I ever emulate entities.
   - The CLI could also let you specify a single file to run every frame instead of world updates, optionally with a function.
 - [ ] Audio Banks
-- [ ] Test stuff more thoroughly (check TODOs). I do wish we had better documentation of what each API function does and how it works...
+- [ ] Test assumptions and other bullshit. I do wish we had better documentation of what each API function does and how it works...
 - [ ] Worldgen (hell nah)
 - [ ] Should I add sandboxing for settings.lua? It does not have most of the APIs. My assumption is that I shouldn't bother because why would a mod even try to use these APIs when they do not work in game.
 - [ ] Ability to specify custom locale for the translation functions

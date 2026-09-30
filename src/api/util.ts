@@ -53,6 +53,15 @@ export function ctx$GamePrint(ctx: Context, log: string) {
   printDebug(`GamePrint (${ctx.id})`, cl.green(GameTextGetTranslatedOrNot(log)));
 }
 
+export function ctx$DEBUG_MARK(
+  ctx: Context,
+  x: number, y: number, message: string,
+  r: number, g: number, b: number
+) {
+  const color = cl.rgb(Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255));
+  printDebug(`DEBUG_MARK (${ctx.id}) @ ${x}, ${y}`, color(message));
+}
+
 export function ctx$GamePrintImportant(ctx: Context, title: string, description: string) {
   printDebug(
     `GamePrintImportant (${ctx.id})`,
