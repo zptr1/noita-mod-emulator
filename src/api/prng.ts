@@ -5,6 +5,12 @@ import { config } from "../config";
 const prng = new NollaPrng();
 const proceduralPrng = new NollaPrng();
 
+const scale = (val: number, a?: number, b?: number) => {
+  if (typeof a != "number") return val;
+  if (typeof b != "number") return val * (a + 1);
+  return val * (b + 1 - a) + a;
+}
+
 export function SetWorldSeed(seed: number) {
   config.worldSeed = seed;
   printDebug("API", "Seed changed to", config.worldSeed);
@@ -12,12 +18,6 @@ export function SetWorldSeed(seed: number) {
 
 export function SetRandomSeed(x: number, y: number) {
   prng.SetRandomSeed(config.worldSeed, x, y);
-}
-
-const scale = (val: number, a?: number, b?: number) => {
-  if (typeof a != "number") return val;
-  if (typeof b != "number") return val * (a + 1);
-  return val * (b + 1 - a) + a;
 }
 
 export function Random(a?: number, b?: number): number {

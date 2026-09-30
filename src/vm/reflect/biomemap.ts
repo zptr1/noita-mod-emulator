@@ -48,8 +48,13 @@ export function generateBiomeMap(file: string) {
       biomeMap.buffer = new Uint32Array(width * height);
     },
 
-    BiomeMapGetPixel: (x: number, y: number) => biomeMap.buffer[y * biomeMap.width + x],
+    BiomeMapGetPixel(x: number, y: number) {
+      if (x >= biomeMap.width || y >= biomeMap.height || x < 0 || y < 0) return 0;
+      return biomeMap.buffer[y * biomeMap.width + x];
+    },
+
     BiomeMapSetPixel(x: number, y: number, color: number) {
+      if (x >= biomeMap.width || y >= biomeMap.height || x < 0 || y < 0) return;
       biomeMap.buffer[y * biomeMap.width + x] = color;
     },
     

@@ -1,8 +1,8 @@
 import { GameTextGetTranslatedOrNot } from "./data/locale";
-import { biomeMap } from "../vm/reflect/biomemap";
 import { activeModsById, activeMods } from "../vm/loader";
+import { biomeMap } from "../vm/reflect/biomemap";
+import { printDebug, printError } from "../log";
 import { Context } from "../context";
-import { printDebug } from "../log";
 import { EMULATOR } from "../const";
 import cl from "chalk";
 
@@ -17,8 +17,8 @@ export function ModGetActiveModIDs() {
   return activeMods.map((x) => x.id);
 }
 
-export function print_error(...text: string[]) {
-  console.error(...text);
+export function ctx$print_error(ctx: Context, ...text: string[]) {
+  printError(ctx.id, ...text);
 }
 
 export function GameGetDateAndTimeUTC() {
@@ -28,7 +28,7 @@ export function GameGetDateAndTimeUTC() {
 
 export function GameGetDateAndTimeLocal() {
   const date = new Date();
-  return [date.getFullYear(), date.getMonth() + 1, date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds(), false];
+  return [date.getFullYear(), date.getMonth() + 1, date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()];
 }
 
 export const BiomeMapGetSize = () => [biomeMap.width, biomeMap.height];

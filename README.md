@@ -6,6 +6,18 @@ i will delete/tidy up all this late r
 
 good job reading the commit history
 
+## Assumptions
+
+These are untested assumptions that might or might not lead to issues.
+
+- The biome map & materials.xml are loaded right after `OnMagicNumbersAndWorldSeedInitialized`.
+- Lua appends are stored as a unique set, meaning adding the same file multiple times does nothing. Order is preserved.
+- Reading/writing files always returns an UTF-8 string. Doing so will cache the string in memory and mark the file as "text"; after this you cannot use image editing APIs because they require binary files.
+- There's a lot of placeholder functions in `src/context/placeholder.ts` which return blank data (`nil`, `0`, `""`, `{}`, etc) and ignore any arguments passed to them. This is used for unimplemented APIs and for some toggleable APIs (like image editing), which can lead to issues if a mod really needs accurate behavior.
+- Width and height in `BiomeMapLoadImageCropped` are used for cropping, not resizing.
+- `ModImageSetPixel`, `ModImageGetPixel` (and the same biome map APIs) always use 32-bit colors of format `AABBGGRR`. RGB images are converted into RGBA.
+- ... TBD
+
 ## TODO
 
 feature creep yay

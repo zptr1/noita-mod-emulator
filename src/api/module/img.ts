@@ -24,14 +24,14 @@ export function ModImageIdFromFilename(path: string) {
 
 export function ModImageSetPixel(id: number, x: number, y: number, color: number) {
   const img = IMAGE_FILES[id - 1];
-  if (!img || y >= img.height || x >= img.width) return;
+  if (!img || x >= img.width || y >= img.height || x < 0 || y < 0) return;
 
   img.buffer[y * img.width + x] = color;
 }
 
 export function ModImageGetPixel(id: number, x: number, y: number) {
   const img = IMAGE_FILES[id - 1];
-  if (!img || y >= img.height || x >= img.width) return 0;
+  if (!img || x >= img.width || y >= img.height || x < 0 || y < 0) return 0;
 
   return img.buffer[y * img.width + x];
 }
