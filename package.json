@@ -9,5 +9,8 @@
     "pngjs": "^7.0.0",
     "raylib": "^0.14.0",
     "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
   }
 }

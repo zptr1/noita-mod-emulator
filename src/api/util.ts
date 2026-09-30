@@ -4,6 +4,7 @@ import { biomeMap } from "../vm/reflect/biomemap";
 import { printDebug, printError } from "../log";
 import { Context } from "../context";
 import { EMULATOR } from "../const";
+import { config } from "../config";
 import cl from "chalk";
 
 export const ModGetAPIVersion = () => 6942;
@@ -43,6 +44,11 @@ export function GameGetFrameNum() {
 
 export function GameGetRealWorldTimeSinceStarted() {
   return performance.now() / 1000;
+}
+
+export function SetWorldSeed(seed: number) {
+  config.worldSeed = seed;
+  printDebug("API", "Seed changed to", seed);
 }
 
 export function ctx$print(ctx: Context, ...text: string[]) {

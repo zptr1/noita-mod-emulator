@@ -5,7 +5,9 @@ export const config = {
   worldSeed: 0,
   gamePath: tryFindGameDir(),
   workshopPath: tryFindWorkshopDir(),
+
   enableImageEditing: true,
+  enablePRNG: true,
   enableLocalization: true,
   enableBiomeMap: true,
 

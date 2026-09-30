@@ -1,6 +1,5 @@
-import { NollaPrng } from "../lib/nolla_prng";
-import { printDebug } from "../log";
-import { config } from "../config";
+import { NollaPrng } from "../../lib/nolla_prng";
+import { config } from "../../config";
 
 const prng = new NollaPrng();
 const proceduralPrng = new NollaPrng();
@@ -9,11 +8,6 @@ const scale = (val: number, a?: number, b?: number) => {
   if (typeof a != "number") return val;
   if (typeof b != "number") return val * (a + 1);
   return val * (b + 1 - a) + a;
-}
-
-export function SetWorldSeed(seed: number) {
-  config.worldSeed = seed;
-  printDebug("API", "Seed changed to", config.worldSeed);
 }
 
 export function SetRandomSeed(x: number, y: number) {

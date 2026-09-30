@@ -27,6 +27,12 @@ export function getLuaPlaceholder() {
 const _blankFunctions = [
   { ret: "0",
     list: [
+      "Random",
+      "RandomDistribution",
+      "RandomDistributionf",
+      "ProceduralRandom",
+      "ProceduralRandomf",
+      "ProceduralRandomi",
       "ModImageGetPixel",
       "ComponentGetValue2",
       "ComponentObjectGetValue2",
@@ -156,6 +162,7 @@ const _blankFunctions = [
   },
   { ret: "nil",
     list: [
+      "SetRandomSeed",
       "ModImageSetPixel",
       "GuiTextCentered",
       "GameSetPostFxTextureParameter",

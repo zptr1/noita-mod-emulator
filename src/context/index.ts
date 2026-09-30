@@ -49,6 +49,7 @@ export class Context {
     this.addAPI(API.Base);
 
     if (config.enableImageEditing) this.addAPI(API.Image);
+    if (config.enablePRNG) this.addAPI(API.PRNG);
 
     this.setGlobal("bit", luaBitLib);
     this.setGlobal("__emulatorSettings", config);
