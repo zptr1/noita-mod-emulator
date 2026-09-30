@@ -46,10 +46,9 @@ feature creep yay
     - Maybe grab settings from the game? The format is easy to parse.
 - [ ] GUI Emulation
   - Maybe using node-raylib. Seems the simplest, and works well with the frame system
-  - Probably won't emulate how the mod actually does it? At least not for now.
-  - The way mods do it (iirc) is summon an entity with a LuaComponent that runs every frame, and that component does its gui things.
-    * Some mods also use OnWorldPreUpdate/OnWorldPostUpdate
-  - The CLI could let you specify a single file to run every frame, optionally with a function since LuaComponent lets you do that.
+  - Most mods use `OnWorldPreUpdate`/`OnWorldPostUpdate`. The CLI could have an argument to keep running world updates every frame, and spawn a window if any GUI is being done.
+  - Some mods can also have an entity with a `LuaComponent` that runs a script every frame; this might be done later if I ever emulate entities.
+  - The CLI could also let you specify a single file to run every frame instead of world updates, optionally with a function.
 - [ ] Audio Banks
 - [ ] Test stuff more thoroughly (check TODOs). I do wish we had better documentation of what each API function does and how it works...
 - [ ] Worldgen (hell nah)

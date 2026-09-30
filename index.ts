@@ -1,9 +1,5 @@
 import { profiler, load, Reflect, run, setConfig } from "./src";
 
-setConfig({
-  enableImageEditing: false,
-})
-
 profiler.start();
 load(["noita.fairmod"]);
 run();

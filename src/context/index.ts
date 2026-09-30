@@ -1,6 +1,6 @@
 import { createProfiler, Profiler, profilerEnabled } from "./profiler";
+import { getLuaPlaceholder } from "./placeholders";
 import { LuaFunction, LuaState } from "lua-state";
-import { getLuaPlaceholder } from "./placeholder";
 import { getLuaScript } from "../lib/util";
 import { luaBitLib } from "../lib/bit";
 import { config } from "../config";
