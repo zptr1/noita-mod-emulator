@@ -1,5 +1,5 @@
 ---@diagnostic disable: undefined-global
--- This is ran right after init-ctx.lua if measurePerf is enabled
+-- This is ran right after init-ctx.lua if the profiler is enabled
 
 local _originalDofile = dofile;
 local _originalDofileOnce = dofile_once;

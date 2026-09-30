@@ -1,12 +1,11 @@
-import { perf, load, Reflect, run } from "./src";
-import { writeFileSync } from "node:fs";
+import { profiler, load, Reflect, run } from "./src";
 
-perf.start();
-load(["Apotheosis", "noita.fairmod"]);
+profiler.start();
+load(["Apotheosis"]);
 run();
 
 Reflect.getSpells();
 Reflect.getPerks();
 Reflect.getStatusEffects();
 
-perf.exportFlameGraph("graph.txt");
+profiler.exportFlameGraph("graph.txt", "count");

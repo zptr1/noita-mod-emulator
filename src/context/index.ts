@@ -1,5 +1,6 @@
-import { createProfiler, Profiler, profilerEnabled } from "./perf";
+import { createProfiler, Profiler, profilerEnabled } from "./profiler";
 import { LuaFunction, LuaState } from "lua-state";
+import { getLuaPlaceholder } from "./placeholder";
 import { getLuaScript } from "../lib/util";
 import { luaBitLib } from "../lib/bit";
 import { config } from "../config";
@@ -20,6 +21,7 @@ export class Context {
   constructor(
     public readonly id: string = "?",
   ) {
+    this.lua.eval(getLuaPlaceholder());
     this.lua.eval(LUA_INIT);
     this.initProfiler();
 
@@ -40,29 +42,28 @@ export class Context {
     this.lua.eval(LUA_INIT_PERF);
     this.lua.setGlobal("__perf_begin", this.profiler.begin as any);
     this.lua.setGlobal("__perf_end", this.profiler.end as any);
+    this.lua.setGlobal("__perf_immediate", this.profiler.immediate as any);
   }
 
   private initGlobals() {
-    for (const key in API) {
+    this.addAPI(API);
+
+    this.setGlobal("bit", luaBitLib);
+    this.setGlobal("__emulatorSettings", config);
+  }
+
+  addAPI(api: Record<string, any>) {
+    for (const key in api) {
       if (key[0] == "$") continue;
       if (key.startsWith("ctx$")) {
-        const fn = API[key];
+        const fn = api[key];
         const fname = key.slice(4);
 
         this.setGlobal(fname, (...args: any[]) => fn(this, ...args));
       } else {
-        this.setGlobal(key, API[key]);
+        this.setGlobal(key, api[key]);
       }
     }
-
-    for (const { fn, list } of API.$blankFunctions) {
-      for (const fname of list) {
-        this.setGlobal(fname, fn);
-      }
-    }
-
-    this.setGlobal("bit", luaBitLib);
-    this.setGlobal("__emulatorSettings", config);
   }
 
   setGlobal(name: string, value: any) {

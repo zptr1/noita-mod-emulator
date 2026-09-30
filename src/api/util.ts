@@ -6,6 +6,8 @@ import { printDebug } from "../log";
 import { EMULATOR } from "../const";
 import cl from "chalk";
 
+export const ModGetAPIVersion = () => 6942;
+
 export function ModIsEnabled(id: string) {
   if (id == EMULATOR) return true;
   return activeModsById.has(id);

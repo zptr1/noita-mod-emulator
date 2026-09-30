@@ -1,6 +1,6 @@
+import { writeFileSync } from "node:fs";
 import { printLog } from "../log";
 import type { Context } from ".";
-import { writeFileSync } from "node:fs";
 
 export const callStack: StackFrame[] = [];
 export const graph: GraphEvent[] = [];
@@ -75,6 +75,11 @@ export function createProfiler(ctx: Context) {
 
       if (parent) parent.children.set(label, event);
       graph.push(event);
+    },
+    
+    immediate(label: string) {
+      profiler.begin(label);
+      profiler.end(label);
     }
   };
 

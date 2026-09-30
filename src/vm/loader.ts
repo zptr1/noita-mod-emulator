@@ -68,6 +68,17 @@ export function loadModListFromDir(dir: string) {
   }
 }
 
+let modsLoaded = false;
+export function loadModList() {
+  if (modsLoaded) return;
+  modsLoaded = true;
+
+  loadModListFromDir(pjoin(config.gamePath || "", "mods"));
+  loadModListFromDir(config.workshopPath || "");
+
+  printLog("VM", "Detected", availableMods.size, "available mods");
+}
+
 export function load(mods: string[]) {
   if (!gameCtx) {
     gameCtx = new Context();
@@ -77,10 +88,7 @@ export function load(mods: string[]) {
       throw new Error(`Could not find Noita's folder. Set it in config.gamePath`);
     }
 
-    loadModListFromDir(pjoin(config.gamePath, "mods"));
-    loadModListFromDir(config.workshopPath || "");
-    printLog("VM", "Detected", availableMods.size, "available mods");
-
+    loadModList();
     loadGameData(path);
   }
 

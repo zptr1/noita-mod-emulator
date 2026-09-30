@@ -8,6 +8,10 @@ good job reading the commit history
 
 ## TODO
 
+feature creep yay
+
+(half of this is just random ideas idk if ill do any of this)
+
 - [ ] Reflection
   * [ ] Finish existing reflection (spells, perks, status effects)
   * [ ] Enemy reflection
@@ -17,6 +21,7 @@ good job reading the commit history
   * [ ] HTML geneartion for neat viewing
   * [ ] Maybe a mod file browser could be good too? Inspecting every single change that occurred from every mod, and the final file tree, including appends.
   * [ ] Biome configs
+  * [ ] Mod settings?
 - [ ] Whatever that API func was called that does something with material files? I'm pretty sure I marked a function like that as a placeholder.. Would be good to emulate.
 - [ ] Entity and Component API
 - [ ] Good CLI
@@ -39,3 +44,4 @@ good job reading the commit history
 - [ ] Worldgen (hell nah)
 - [ ] Can I make a better way to toggle APIs without me having to hardcode conditions to every function that has to be toggleable? I would have to put placeholder functions into separate API modules.
 - [ ] Should I add sandboxing for settings.lua? It does not have most of the APIs. My assumption is that I shouldn't bother because why would a mod even try to use these APIs when they do not work in game.
+- [ ] Ability to specify custom locale for the translation functions

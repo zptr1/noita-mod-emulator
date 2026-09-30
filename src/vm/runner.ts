@@ -48,7 +48,6 @@ export function runSettings() {
       ctx.runHook("ModSettingsUpdate", 0);
     } catch (err) {
       console.error(err.toString());
-      return;
     }
   }
 }

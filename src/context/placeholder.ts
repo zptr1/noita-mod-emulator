@@ -1,31 +1,34 @@
-import { arrayToLua } from "../lib/util";
+import { profilerEnabled } from "./profiler";
 
-export const EntityGetIsAlive = () => true;
-export const DoesWorldExistAt = () => true;
-export const GameSetFogOfWar = () => true;
-export const EntityGetTransform = () => [0, 0, 0, 1, 1];
-export const GetSurfaceNormal = () => [false, 0, 0, 0];
-export const EntityGetClosestWormAttractor = () => [0, 0, 0];
-export const EntityGetClosestWormDetractor = () => [0, 0, 0, 0];
-export const GameGetCameraBounds = () => [0, 0, 1, 1];
-export const EntityGetWithTag = () => arrayToLua([0]);
+let cache: string = "";
+let cacheProfiler: string = "";
 
-export const GuiCreate = () => {};
-export const GuiImageButton = () => [false, false];
-export const GuiButton = () => [false, false];
-export const GuiGetPreviousWidgetInfo = () => [false, false, false, 0, 0, 1, 1, 0, 0, 1, 1];
+export function getLuaPlaceholder() {
+  if (!profilerEnabled && cache) return cache;
+  if (profilerEnabled && cacheProfiler) return cacheProfiler;
 
-export const GameIsModeFullyDeterministic = () => true;
-export const GameIsBetaBuild = () => false;
-export const DebugGetIsDevBuild = () => false;
-export const ModGetAPIVersion = () => 6942;
+  const lua = _blankFunctions.map(
+    ({ ret, list }) => list.map(
+      (fn) => profilerEnabled
+        ? `function ${fn}() __perf_immediate("${fn}") return ${ret} end`
+        : `function ${fn}() return ${ret} end`
+    )
+  ).flat().join("\n");
 
-export const ComponentGetValue2 = (id: number, key: string) => 0;
+  if (profilerEnabled) {
+    cacheProfiler = lua;
+  } else {
+    cache = lua;
+  }
 
-export const $blankFunctions = [
-  { // zero
-    fn: () => 0,
+  return lua;
+}
+
+const _blankFunctions = [
+  { ret: "0",
     list: [
+      "ComponentGetValue2",
+      "ComponentObjectGetValue2",
       "PhysicsBodyIDGetGravityScale",
       "InputGetJoystickAnalogButton",
       "GameGetFogOfWar",
@@ -76,9 +79,11 @@ export const $blankFunctions = [
       "GetDailyPracticeRunSeed"
     ]
   },
-  { // false
-    fn: () => false,
+  { ret: "false",
     list: [
+      "GameIsBetaBuild",
+      "DebugGetIsDevBuild",
+      "GameSetFogOfWar",
       "InputIsJoystickButtonDown",
       "InputIsJoystickButtonJustDown",
       "InputIsJoystickConnected",
@@ -106,8 +111,7 @@ export const $blankFunctions = [
       "GameGetIsTrailerModeEnabled",
     ]
   },
-  { // empty string
-    fn: () => "",
+  { ret: '""',
     list: [
       "ComponentGetMetaCustom",
       "ComponentObjectGetValue",
@@ -125,11 +129,10 @@ export const $blankFunctions = [
       "DebugBiomeMapGetFilename",
     ]
   },
-  { // empty table
-    fn: () => ({}),
+  { ret: "{}",
     list: [
+      "GuiCreate",
       "ModMaterialFilesGet", // TODO
-
       "PhysicsBodyIDGetFromEntity",
       "PhysicsBodyIDQueryBodies",
       "EntityGetAllComponents",
@@ -148,8 +151,7 @@ export const $blankFunctions = [
       "PolymorphTableGet",
     ]
   },
-  { // nil
-    fn: () => null,
+  { ret: "nil",
     list: [
       "GuiTextCentered",
       "GameSetPostFxTextureParameter",
@@ -193,9 +195,7 @@ export const $blankFunctions = [
       "ComponentGetTags",
       "ComponentGetValue",
       "ComponentSetValue",
-      // "ComponentGetValue2",
       "ComponentSetValue2",
-      "ComponentObjectGetValue2",
       "ComponentObjectSetValue2",
       "ComponentGetVectorValue",
       "ComponentGetVector",
@@ -324,8 +324,14 @@ export const $blankFunctions = [
       "BiomeMaterialGetValue",
     ]
   },
-  { // 0, 0
-    fn: () => [0, 0],
+  { ret: "true",
+    list: [
+      "EntityGetIsAlive",
+      "DoesWorldExistAt",
+      "GameIsModeFullyDeterministic"
+    ]
+  },
+  { ret: "0, 0",
     list: [
       "PhysicsBodyIDGetWorldCenter",
       "PhysicsBodyIDGetDamping",
@@ -351,8 +357,16 @@ export const $blankFunctions = [
       "GamePosToPhysicsPos"
     ]
   },
-  { // false, 0, 0
-    fn: () => [false, 0, 0],
+  { ret: "false, false",
+    list: [
+      "GuiImageButton",
+      "GuiButton"
+    ]
+  },
+  { ret: "0, 0, 0",
+    list: ["EntityGetClosestWormAttractor"]
+  },
+  { ret: "false, 0, 0",
     list: [
       "Raytrace",
       "RaytraceSurfaces",
@@ -360,11 +374,30 @@ export const $blankFunctions = [
       "RaytracePlatforms",
     ]
   },
-  { // [0, 0, 0, 0, 0, 0]
-    fn: () => [0, 0, 0, 0, 0, 0],
+  { ret: "0, 0, 0, 0",
+    list: ["EntityGetClosestWormDetractor"]
+  },
+  { ret: "0, 0, 1, 1",
+    list: ["GameGetCameraBounds"]
+  },
+  { ret: "0, 0, 0, 1, 1",
+    list: ["EntityGetTransform"]
+  },
+  { ret: "false, 0, 0, 0",
+    list: ["GetSurfaceNormal"]
+  },
+  { ret: "0, 0, 0, 0, 0, 0",
     list: [
       "PhysicsComponentGetTransform",
       "PhysicsBodyIDGetTransform",
     ]
+  },
+  { ret: "false, false, false, 0, 0, 1, 1, 0, 0, 1, 1",
+    list: ["GuiGetPreviousWidgetInfo"]
+  },
+  { ret: "{ 0 }",
+    list: ["EntityGetWithTag"]
   }
 ];
+
+export const PLACEHOLDER_FUNCS = new Set(_blankFunctions.map((x) => x.list).flat());
