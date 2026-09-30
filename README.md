@@ -54,3 +54,8 @@ feature creep yay
 - [ ] Worldgen (hell nah)
 - [ ] Should I add sandboxing for settings.lua? It does not have most of the APIs. My assumption is that I shouldn't bother because why would a mod even try to use these APIs when they do not work in game.
 - [ ] Ability to specify custom locale for the translation functions
+- [ ] Consider switching to `wasmoon`
+  * JS<->WASM is much faster than JS<->C++ FFI
+  * Might be slightly slower on the lua side, but WASM can get very close to native speed
+  * Can be easier to install
+  * Can allow this to be used in web environments (very needed for another noita project of mine)

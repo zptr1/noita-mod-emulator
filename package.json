@@ -2,12 +2,12 @@
   "type": "module",
   "dependencies": {
     "@types/pngjs": "^6.0.5",
-    "canvas": "^4.0.0-rc3",
     "chalk": "^6.0.1",
     "csv-parse": "^7.0.3",
     "fast-xml-parser": "^5.11.1",
     "lua-state": "^1.2.0",
     "pngjs": "^7.0.0",
+    "raylib": "^0.14.0",
     "sharp": "^0.35.5"
   }
 }
