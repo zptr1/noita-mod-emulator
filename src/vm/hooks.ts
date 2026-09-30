@@ -11,7 +11,7 @@ export function initHooks() {
   init = true;
 
   preHook("OnModPreInit", () => {
-    API.ModMagicNumbersFileAdd("data/magic_numbers.xml");
+    API.Base.ModMagicNumbersFileAdd("data/magic_numbers.xml");
     gameCtx.execFile("data/scripts/init.lua");
   
     for (const mod of activeMods) {
@@ -20,7 +20,7 @@ export function initHooks() {
   });
   
   preHook("OnMagicNumbersAndWorldSeedInitialized", () => {
-    API.$loadMagicNumbers();
+    API.Base.$loadMagicNumbers();
   });
   
   postHook("OnMagicNumbersAndWorldSeedInitialized", () => {

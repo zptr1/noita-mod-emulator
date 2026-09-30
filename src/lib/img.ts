@@ -86,8 +86,8 @@ export function putImage(
   cropX = 0, cropY = 0,
   cropW = src.width, cropH = src.height
 ) {
-  cropX = Math.max(cropX, 0);
-  cropY = Math.max(cropY, 0);
+  cropX = Math.min(Math.max(cropX, 0), src.width - 1);
+  cropY = Math.min(Math.max(cropY, 0), src.height - 1);
   cropW = Math.min(Math.max(cropW, 0), src.width - cropX, dest.width - destX);
   cropH = Math.min(Math.max(cropH, 0), src.height - cropY, dest.height - destY);
 

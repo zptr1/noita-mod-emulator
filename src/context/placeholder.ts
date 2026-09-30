@@ -27,6 +27,7 @@ export function getLuaPlaceholder() {
 const _blankFunctions = [
   { ret: "0",
     list: [
+      "ModImageGetPixel",
       "ComponentGetValue2",
       "ComponentObjectGetValue2",
       "PhysicsBodyIDGetGravityScale",
@@ -81,6 +82,7 @@ const _blankFunctions = [
   },
   { ret: "false",
     list: [
+      "ModImageDoesExist",
       "GameIsBetaBuild",
       "DebugGetIsDevBuild",
       "GameSetFogOfWar",
@@ -113,6 +115,7 @@ const _blankFunctions = [
   },
   { ret: '""',
     list: [
+      "ModImageWhoSetContent",
       "ComponentGetMetaCustom",
       "ComponentObjectGetValue",
       "EntityGetName",
@@ -153,6 +156,7 @@ const _blankFunctions = [
   },
   { ret: "nil",
     list: [
+      "ModImageSetPixel",
       "GuiTextCentered",
       "GameSetPostFxTextureParameter",
       "GameUnsetPostFxTextureParameter",
@@ -364,7 +368,11 @@ const _blankFunctions = [
     ]
   },
   { ret: "0, 0, 0",
-    list: ["EntityGetClosestWormAttractor"]
+    list: [
+      "EntityGetClosestWormAttractor",
+      "ModImageMakeEditable",
+      "ModImageIdFromFilename"
+    ]
   },
   { ret: "false, 0, 0",
     list: [

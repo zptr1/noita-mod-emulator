@@ -1,5 +1,13 @@
-export * from "./script";
-export * from "./prng";
-export * from "./data";
-export * from "./util";
-export * from "./img";
+import * as Script from "./script";
+import * as PRNG from "./prng";
+import * as Data from "./data";
+import * as Util from "./util";
+
+export * as Image from "./module/img";
+
+export const Base = {
+  ...Script,
+  ...PRNG,
+  ...Data,
+  ...Util
+};

@@ -1,11 +1,15 @@
-import { profiler, load, Reflect, run } from "./src";
+import { profiler, load, Reflect, run, setConfig } from "./src";
+
+setConfig({
+  enableImageEditing: false,
+})
 
 profiler.start();
-load(["Apotheosis"]);
+load(["noita.fairmod"]);
 run();
 
 Reflect.getSpells();
 Reflect.getPerks();
 Reflect.getStatusEffects();
 
-profiler.exportFlameGraph("graph.txt", "count");
+profiler.exportFlameGraph("graph.txt", "duration");

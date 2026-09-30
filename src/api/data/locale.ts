@@ -2,6 +2,7 @@ import { parse } from "csv-parse/sync";
 import { printDebug } from "../../log";
 import { LOCALE } from "../../storage";
 import { getFile } from "../../vfs";
+import { config } from "../../config";
 
 function loadLocale() {
   printDebug("API", "Parsing locale");
@@ -25,6 +26,8 @@ export function GameTextGetTranslatedOrNot(text: string) {
 }
 
 export function GameTextGet(key: string, ...params: string[]) {
+  if (!config.enableLocalization) return key;
+
   if (!LOCALE.size) loadLocale();
   if (key.length == 1) return "en";
   if (!key) throw new Error("Crash! GameTextGet() called with an empty key");
@@ -32,5 +35,5 @@ export function GameTextGet(key: string, ...params: string[]) {
   const val = LOCALE.get(key);
   if (!val) return "";
 
-  return val.replace(/\$(\d+)/, (_, n) => params[Number(n)]);
+  return val.replace(/\$(\d+)/g, (_, n) => params[Number(n)]);
 }

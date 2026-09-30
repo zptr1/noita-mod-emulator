@@ -36,12 +36,10 @@ feature creep yay
   - Maybe using node-raylib. Seems the simplest, and works well with the frame system
   - Probably won't emulate how the mod actually does it? At least not for now.
   - The way mods do it (iirc) is summon an entity with a LuaComponent that runs every frame, and that component does its gui things.
-    * Although some mods seem to already be calling GUI stuff without that? Need to look into that
+    * Some mods also use OnWorldPreUpdate/OnWorldPostUpdate
   - The CLI could let you specify a single file to run every frame, optionally with a function since LuaComponent lets you do that.
-  - But the way mods do it doesn't sound too hard to replicate if I implement entity and componenet API. Because then I can add a setting to allow running LuaComponent's, which can then trigger GUI functions, and as soon as there's any GUI stuff being done, spawn a window.
 - [ ] Audio Banks
 - [ ] Test stuff more thoroughly (check TODOs). I do wish we had better documentation of what each API function does and how it works...
 - [ ] Worldgen (hell nah)
-- [ ] Can I make a better way to toggle APIs without me having to hardcode conditions to every function that has to be toggleable? I would have to put placeholder functions into separate API modules.
 - [ ] Should I add sandboxing for settings.lua? It does not have most of the APIs. My assumption is that I shouldn't bother because why would a mod even try to use these APIs when they do not work in game.
 - [ ] Ability to specify custom locale for the translation functions

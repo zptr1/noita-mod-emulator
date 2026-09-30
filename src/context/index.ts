@@ -46,7 +46,9 @@ export class Context {
   }
 
   private initGlobals() {
-    this.addAPI(API);
+    this.addAPI(API.Base);
+
+    if (config.enableImageEditing) this.addAPI(API.Image);
 
     this.setGlobal("bit", luaBitLib);
     this.setGlobal("__emulatorSettings", config);
