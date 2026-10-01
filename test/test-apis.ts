@@ -1,4 +1,4 @@
-import { PLACEHOLDER_FUNCS } from "../src/context/placeholders";
+import { PLACEHOLDER_FUNCS } from "../src/context/lua";
 import { readFileSync } from "node:fs";
 import * as API from "../src/api";
 

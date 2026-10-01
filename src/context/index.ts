@@ -1,13 +1,9 @@
 import { createProfiler, Profiler, profilerEnabled } from "./profiler";
-import { getLuaPlaceholder } from "./placeholders";
 import { LuaFunction, LuaState } from "lua-state";
-import { getLuaScript } from "../lib/util";
 import { luaBitLib } from "../lib/bit";
+import { getLuaInit } from "./lua";
 import { config } from "../config";
 import * as API from "../api";
-
-const LUA_INIT = getLuaScript("init-ctx.lua");
-const LUA_INIT_PERF = getLuaScript("init-perf.lua");
 
 export class Context {
   public readonly lua = new LuaState({ libs: config.luaLibs });
@@ -21,8 +17,7 @@ export class Context {
   constructor(
     public readonly id: string = "?",
   ) {
-    this.lua.eval(getLuaPlaceholder());
-    this.lua.eval(LUA_INIT);
+    this.lua.eval(getLuaInit());
     this.initProfiler();
 
     this.dofile = this.lua.getGlobal("dofile") as any;
@@ -39,7 +34,6 @@ export class Context {
     if (!profilerEnabled) return;
 
     this.profiler = createProfiler(this);
-    this.lua.eval(LUA_INIT_PERF);
     this.lua.setGlobal("__perf_begin", this.profiler.begin as any);
     this.lua.setGlobal("__perf_end", this.profiler.end as any);
     this.lua.setGlobal("__perf_immediate", this.profiler.immediate as any);

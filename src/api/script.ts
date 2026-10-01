@@ -1,16 +1,19 @@
-import { fileBlame, fileExists, getFile, setFile } from "../vfs";
+import { fileBlame, fileExists, getFile, realFilePath, setFile } from "../vfs";
 import { arrayToLua, resolvePath } from "../lib/util";
 import { LUA_APPENDS } from "../storage";
 import { Context } from "../context";
 import { printDebug } from "../log";
 
-export const __normalize_path = resolvePath;
+export function __normalize_path(path: string) {
+  path = resolvePath(path);
+  return [path, realFilePath.get(path) || `vanilla/${path}`];
+}
 
 export function ctx$ModTextFileSetContent(ctx: Context, path: string, content: string) {
   path = resolvePath(path);
   setFile(path, content, ctx.id);
 }
-  
+
 export const ModTextFileGetContent = (path: string) => getFile(path);
 export const ModDoesFileExist = (path: string) => fileExists(path);
 

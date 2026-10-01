@@ -1,38 +1,46 @@
 import { profilerEnabled } from "./profiler";
+import { getLuaScript } from "../lib/util";
 
 let cache: string = "";
-let cacheProfiler: string = "";
+let cacheForProfiler = false;
 
-export function getLuaPlaceholder() {
-  if (!profilerEnabled && cache) return cache;
-  if (profilerEnabled && cacheProfiler) return cacheProfiler;
+const LUA_INIT = getLuaScript("init-ctx.lua");
+const LUA_INIT_PERF = getLuaScript("init-perf.lua");
 
-  const lua = _blankFunctions.map(
-    ({ ret, list }) => list.map(
-      (fn) => profilerEnabled
-        ? `function ${fn}() __perf_immediate("${fn}") return ${ret} end`
-        : `function ${fn}() return ${ret} end`
-    )
-  ).flat().join("\n");
-
-  if (profilerEnabled) {
-    cacheProfiler = lua;
-  } else {
-    cache = lua;
+export function getLuaInit() {
+  if (cache && cacheForProfiler == profilerEnabled) {
+    return cache;
   }
 
-  return lua;
+  const script = blankFunctions.map(
+    ({ ret, list, arg }) => list.map(
+      (fn) => [
+        `function ${fn}(${arg || ""})`,
+        profilerEnabled
+          ? `__perf_immediate("${fn}")`
+          : "",
+        `return ${ret} end`,
+      ].join(" ")
+    )
+  ).flat();
+
+  script.push(LUA_INIT);
+
+  if (profilerEnabled) {
+    script.push(LUA_INIT_PERF);
+  }
+
+  const str = script.join("\n");
+
+  cache = str;
+  cacheForProfiler = profilerEnabled;
+
+  return str;
 }
 
-const _blankFunctions = [
+const blankFunctions = [
   { ret: "0",
     list: [
-      "Random",
-      "RandomDistribution",
-      "RandomDistributionf",
-      "ProceduralRandom",
-      "ProceduralRandomf",
-      "ProceduralRandomi",
       "ModImageGetPixel",
       "ComponentGetValue2",
       "ComponentObjectGetValue2",
@@ -412,7 +420,26 @@ const _blankFunctions = [
   },
   { ret: "{ 0 }",
     list: ["EntityGetWithTag"]
+  },
+  {
+    arg: "a, b",
+    ret: "a or 0",
+    list: [
+      "Random",
+      "Randomf",
+      "RandomDistribution",
+      "RandomDistributionf"
+    ]
+  },
+  {
+    arg: "x, y, a, b",
+    ret: "a or 0",
+    list: [
+      "ProceduralRandom",
+      "ProceduralRandomf",
+      "ProceduralRandomi"
+    ]
   }
 ];
 
-export const PLACEHOLDER_FUNCS = new Set(_blankFunctions.map((x) => x.list).flat());
+export const PLACEHOLDER_FUNCS = new Set(blankFunctions.map((x) => x.list).flat());

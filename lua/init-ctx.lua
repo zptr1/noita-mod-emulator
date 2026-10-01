@@ -5,18 +5,18 @@ __loaded = {}
 __loadonce = {}
 
 function loadfile(path)
-  local file = __normalize_path(path)
+  local file, display_path = __normalize_path(path)
   local content = ModTextFileGetContent(file)
 
   if not content then
-		print_error("Error @ loadfile(" .. path .. "): Unknown file")
+		print_error("Error @ loadfile(" .. display_path .. "): Unknown file")
     return nil, "Unknown file"
   end
 
-  local func, err = loadstring(content, "@" .. file)
+  local func, err = loadstring(content, "@" .. display_path)
 
   if not func then
-		print_error("Error @ loadfile(" .. path .. "): " .. tostring(err))
+		print_error("Error @ loadfile(" .. display_path .. "): " .. tostring(err))
     return nil, tostring(err)
   end
 

@@ -2,10 +2,10 @@ import { writeFileSync } from "node:fs";
 import { printLog } from "../log";
 import type { Context } from ".";
 
+export let profilerEnabled = false;
+
 export const callStack: StackFrame[] = [];
 export const graph: GraphEvent[] = [];
-
-export let profilerEnabled = false;
 
 export type Profiler = ReturnType<typeof createProfiler>;
 
@@ -25,7 +25,7 @@ export interface GraphEvent {
 }
 
 export function start() {
-  printLog("VM", "Started profiler");
+  printLog("Profiler", "Started profiler");
   profilerEnabled = true;
 }
 
@@ -88,10 +88,15 @@ export function createProfiler(ctx: Context) {
 
 type GraphKey = "count" | "duration";
 
+export function stop() {
+  profilerEnabled = false;
+  printLog("Profiler", `Profiler stopped; collected ${graph.length} samples`);
+}
+
 /** Use https://speedscope.app/ for viewing the graph */
 export function getFlameGraph(key: GraphKey = "count") {
   return graph
-    .filter((x) => x.duration > 0)
+    .filter((x) => x.duration >= 1)
     .sort((a, b) => a.start - b.start)
     .map((x) => (
       `${x.id};${

@@ -19,10 +19,21 @@ export const postHook = (hook: LuaHook, cb: Function) => hookPostCallbacks.get(h
 export function runHook(hook: LuaHook, ...args: any[]) {
   const pre = hookPreCallbacks.get(hook)!;
   for (const cb of pre) cb(...args);
-  
-  gameCtx.runHook(hook, ...args);
+
+  try {
+    gameCtx.runHook(hook, ...args);
+  } catch (err) {
+    console.error("Error running hook", hook, "for vanilla game");
+    console.error(err);
+  }
+
   for (const mod of activeMods) {
-    mod.ctx.runHook(hook, ...args);
+    try {
+      mod.ctx.runHook(hook, ...args);
+    } catch (err) {
+      console.error("Error running hook", hook, "for", mod.id);
+      console.error(err);
+    }
   }
   
   const post = hookPostCallbacks.get(hook)!;
@@ -62,7 +73,6 @@ export function run() {
       runHook(hook);
     } catch (err) {
       console.error(err.toString());
-      return;
     }
   }
 }

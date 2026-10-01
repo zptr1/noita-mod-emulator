@@ -1,4 +1,4 @@
-import { fileBlame, files, NULL, unreadFiles } from "./files";
+import { fileBlame, files, NULL, realFilePath, unreadFiles } from "./files";
 import { readdirSync, readFileSync } from "node:fs";
 import { resolvePath } from "../lib/util";
 import { printLog } from "../log";
@@ -24,8 +24,9 @@ export function loadDirRecursively(realDir: string, virtualDir: string, modId?: 
       const path = resolvePath(virt);
 
       files.set(path, NULL);
-      unreadFiles.set(path, real);
-      
+      realFilePath.set(path, real);
+      unreadFiles.add(path);
+
       if (modId) {
         fileBlame.set(path, modId);
       }

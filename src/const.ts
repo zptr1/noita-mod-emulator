@@ -1,8 +1,7 @@
 import { arrayToLua, resolvePath } from "./lib/util";
 import { join as pjoin } from "node:path";
 
-// This goes into a mod setting, a persistent flag, a run flag, and an enabled mod,
-// so that mods can detect if they're being emulated by checking any of these
+// This string will be reported as an enabled mod or a setting
 export const EMULATOR = "NOITA_EMULATOR";
 export const EMULATOR_PATH = pjoin(import.meta.dirname, "../");
 
