@@ -1,8 +1,10 @@
 import { fileBlame, fileExists, getFile, realFilePath, setFile } from "../vfs";
 import { arrayToLua, resolvePath } from "../lib/util";
+import { fileChangeLog } from "../reflect/vfs";
 import { LUA_APPENDS } from "../storage";
 import { Context } from "../context";
 import { printDebug } from "../log";
+import { config } from "../config";
 
 export function __normalize_path(path: string) {
   path = resolvePath(path);
@@ -10,6 +12,10 @@ export function __normalize_path(path: string) {
 }
 
 export function ctx$ModTextFileSetContent(ctx: Context, path: string, content: string) {
+  if (config.collectFileLog) {
+    fileChangeLog.push({ action: "write", at: performance.now(), mod: ctx.id, path });
+  }
+
   path = resolvePath(path);
   setFile(path, content, ctx.id);
 }
@@ -30,7 +36,11 @@ export function ctx$do_mod_appends(ctx: Context, path: string) {
   }
 }
 
-export function ModLuaFileAppend(path: string, script: string) {
+export function ctx$ModLuaFileAppend(ctx: Context, path: string, script: string) {
+  if (config.collectFileLog) {
+    fileChangeLog.push({ action: "add_append", at: performance.now(), mod: ctx.id, path, script });
+  }
+
   path = resolvePath(path);
   script = resolvePath(script);
 
@@ -41,7 +51,15 @@ export function ModLuaFileAppend(path: string, script: string) {
   LUA_APPENDS.get(path)!.add(script);
 }
 
-export function ModLuaFileSetAppends(path: string, appends: string[]) {
+export function ctx$ModLuaFileSetAppends(ctx: Context, path: string, appends: string[]) {
+  if (config.collectFileLog) {
+    fileChangeLog.push({
+      action: "add_append", at: performance.now(),
+      mod: ctx.id, path,
+      script: appends.join(";")
+    });
+  }
+
   LUA_APPENDS.set(resolvePath(path), new Set(appends.map(resolvePath)));
 }
 

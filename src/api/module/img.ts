@@ -1,8 +1,10 @@
 import { IMAGE_FILE_MAP, IMAGE_FILES, makeImageEditable } from "../../lib/img";
+import { fileChangeLog } from "../../reflect";
 import { resolvePath } from "../../lib/util";
 import { Context } from "../../context";
 import { fileExists } from "../../vfs";
 import { printDebug } from "../../log";
+import { config } from "../../config";
 
 const imageBlame = new Map<string, string>();
 let pixelAPICount = 0;
@@ -13,6 +15,10 @@ export function ctx$ModImageMakeEditable(ctx: Context, path: string, width: numb
 
   const img = makeImageEditable(path, width, height);
   if (!img) return [0, 0, 0];
+
+  if (config.collectFileLog) {
+    fileChangeLog.push({ action: "image", at: performance.now(), mod: ctx.id, path });
+  }
 
   return [img.id, img.width, img.height];
 }

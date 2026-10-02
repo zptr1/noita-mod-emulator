@@ -1,22 +1,32 @@
 {
   "name": "noita-mod-emulator",
+  "description": "Run and debug Noita mods programmatically outside of the game.",
   "author": {
     "name": "zptr1",
     "url": "https://yui.dev"
   },
   "type": "module",
+  "main": "./dist/lib.mjs",
+  "types": "./src/index.ts",
   "bin": {
-    "noita-emu": "dist/cli.js"
+    "noita-emu": "./dist/cli.js"
   },
+  "files": [
+    "dist",
+    "scripts",
+    "lua",
+    "src"
+  ],
   "scripts": {
-    "build": "node scripts/bundle",
-    "postinstall": "node scripts/bundle"
+    "build": "node scripts/bundle.mjs",
+    "build:lua": "node scripts/build-lua.mjs",
+    "prepublishOnly": "npm run build",
+    "postinstall": "npm run build:lua"
   },
   "dependencies": {
     "chalk": "^6.0.1",
     "commander": "^15.0.0",
     "csv-parse": "^7.0.3",
-    "esbuild": "latest",
     "fast-xml-parser": "^5.11.1",
     "lua-state": "^1.2.0",
     "pngjs": "^7.0.0",
@@ -24,6 +34,8 @@
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "@types/pngjs": "^6.0.5"
+    "@types/pngjs": "^6.0.5",
+    "esbuild": "latest",
+    "typescript": "^7.0.2"
   }
 }

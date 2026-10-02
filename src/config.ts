@@ -13,6 +13,7 @@ export const config = {
   enableLocalization: true,
   enableBiomeMap: true,
 
+  collectFileLog: false,
   luaUnsafeLibs: false,
 };
 

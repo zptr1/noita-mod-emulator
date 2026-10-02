@@ -1,6 +1,6 @@
 import { GameTextGetTranslatedOrNot } from "./data/locale";
 import { activeModsById, activeMods } from "../vm/loader";
-import { biomeMap } from "../vm/reflect/biomemap";
+import { biomeMap } from "../reflect/biomemap";
 import { printDebug, printError } from "../log";
 import { Context } from "../context";
 import { EMULATOR } from "../const";

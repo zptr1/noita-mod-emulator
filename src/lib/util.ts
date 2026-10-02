@@ -1,6 +1,6 @@
 import { EMULATOR_PATH, EXPECTED_LUA_VERSION, EXPECTED_LUAJIT_VERSION } from "../const";
 import { existsSync, readFileSync, statSync } from "node:fs";
-import { basename, join as pjoin } from "node:path";
+import { basename, join as pjoin, relative } from "node:path";
 import { LuaState } from "lua-state";
 import cl from "chalk";
 
@@ -37,13 +37,20 @@ export function isDir(path: string) {
   return existsSync(path) && statSync(path).isDirectory();
 }
 
+let versionChecked = false;
 export function checkLuaVersion() {
+  if (versionChecked) return;
+  versionChecked = true;
+
   const version = new LuaState().getVersion();
   console.log("Running", version);
   if (!version.includes(EXPECTED_LUA_VERSION) || !version.includes(EXPECTED_LUAJIT_VERSION)) {
     console.error(`Invalid version. Expected ${EXPECTED_LUA_VERSION} compiled with ${EXPECTED_LUAJIT_VERSION}`);
     console.error(`Recompile the lua-state library with the correct version:`);
-    console.error(cl.yellow(` > ${basename(process.execPath)} scripts/build-lua.js`));
+
+    const scriptPath = relative(process.cwd(), pjoin(EMULATOR_PATH, "scripts/build-lua.mjs"));
+    console.error(cl.yellow(` > ${basename(process.execPath)} ${scriptPath}`));
+
     process.exit(1);
   }
 }

@@ -1,9 +1,9 @@
-import { Img, loadImage, putImage, swap32 } from "../../lib/img";
-import { MAGIC_NUMBERS, SESSION_NUMBERS } from "../../storage";
-import { printError, printLog, printWarn } from "../../log";
-import { resolvePath } from "../../lib/util";
-import { getFileBinary } from "../../vfs";
-import { Context } from "../../context";
+import { Img, loadImage, putImage, swap32 } from "../lib/img";
+import { MAGIC_NUMBERS, SESSION_NUMBERS } from "../storage";
+import { printError, printLog, printWarn } from "../log";
+import { resolvePath } from "../lib/util";
+import { getFileBinary } from "../vfs";
+import { Context } from "../context";
 
 export const biomeMap: Img = {
   width: 0, height: 0,

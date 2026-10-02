@@ -1,5 +1,5 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
-import { basename, join as pjoin } from "node:path";
+import { basename, join as pjoin, resolve } from "node:path";
 import { loadGameData, loadModData } from "../vfs";
 import { Context } from "../context";
 import { isDir } from "../lib/util";
@@ -28,6 +28,8 @@ export function getModId(dir: string) {
 }
 
 export function loadModFromDir(path: string, id: string = getModId(path)) {
+  path = resolve(path);
+
   if (!isDir(path)) throw new Error(`Unknown mod: ${path}`);
 
   if (!existsSync(pjoin(path, "mod.xml"))) {

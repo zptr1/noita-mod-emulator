@@ -1,6 +1,7 @@
 import { createProfiler, Profiler, profilerEnabled } from "./profiler";
 import { LuaFunction, LuaState } from "lua-state";
 import { config, getLuaLibs } from "../config";
+import { checkLuaVersion } from "../lib/util";
 import { luaBitLib } from "../lib/bit";
 import { printError } from "../log";
 import { getLuaInit } from "./lua";
@@ -29,6 +30,7 @@ export class Context {
     }
 
     this.initGlobals();
+    checkLuaVersion();
   }
 
   private initProfiler() {

@@ -1,6 +1,6 @@
 import { activeMods, gameCtx } from "./loader";
 import { postHook, preHook } from "./runner";
-import { loadBiomeMap } from "./reflect";
+import { loadBiomeMap } from "../reflect";
 import { config } from "../config";
 import * as API from "../api";
 

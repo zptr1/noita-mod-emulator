@@ -81,6 +81,8 @@ export function runSettings() {
 }
 
 export function run() {
+  running = true;
+
   initHooks();
   runSettings();
 

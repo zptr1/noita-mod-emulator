@@ -1,5 +1,5 @@
-import { Context } from "../../context";
-import { printLog } from "../../log";
+import { Context } from "../context";
+import { printLog } from "../log";
 
 // TODO
 

@@ -3,8 +3,6 @@ import { build } from "esbuild";
 
 mkdirSync("dist", { recursive: true });
 
-// Something like this?.. TODO
-
 await build({
   platform: "node",
   entryPoints: ["src/index.ts"],
@@ -13,6 +11,9 @@ await build({
   format: "esm",
   packages: "external",
   target: ["node22"],
+  banner: {
+    js: "#!/usr/bin/node"
+  }
 });
 
 await build({
