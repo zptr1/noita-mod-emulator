@@ -94,10 +94,7 @@ export class Context {
 
   execFileWithAPI(file: string, api: Record<string, any>) {
     try {
-      for (const key in api) {
-        this.setGlobal(key, api[key]);
-      }
-
+      this.addAPI(api);
       return this.execFile(file, false);
     } finally {
       for (const key in api) {

@@ -11,8 +11,10 @@ export interface Img {
   buffer: Uint32Array;
 }
 
-export const IMAGE_FILE_MAP = new Map<string, Img>();
-export const IMAGE_FILES: Img[] = [];
+export const imageFileMap = new Map<string, Img>();
+export const imageFiles: Img[] = [];
+
+export const imageBlame = new Map<string, string>();
 
 export function loadImage(buffer: Buffer, path?: string): Img | undefined {
   if (!Buffer.isBuffer(buffer)) return;
@@ -39,12 +41,12 @@ export function loadImage(buffer: Buffer, path?: string): Img | undefined {
 export function makeImageEditable(path: string, width: number, height: number) {
   path = resolvePath(path);
 
-  if (IMAGE_FILE_MAP.has(path)) {
-    return IMAGE_FILE_MAP.get(path);
+  if (imageFileMap.has(path)) {
+    return imageFileMap.get(path);
   }
 
   const file = getFileBinary(path);
-  const id = IMAGE_FILES.length + 1;
+  const id = imageFiles.length + 1;
   let buffer: Uint32Array;
 
   if (Buffer.isBuffer(file)) {
@@ -62,22 +64,22 @@ export function makeImageEditable(path: string, width: number, height: number) {
     id, width, height, path, buffer
   };
 
-  IMAGE_FILE_MAP.set(path, img);
-  IMAGE_FILES.push(img);
+  imageFileMap.set(path, img);
+  imageFiles.push(img);
 
   return img;
 }
 
-export async function saveImageToDisk(realPath: string, img: Img) {
+export async function encodeImageToPNG(img: Img) {
   const { width, height, buffer } = img;
   const raw = Buffer.from(buffer.buffer, buffer.byteOffset, buffer.byteLength);
 
-  await sharp(raw, {
+  return await sharp(raw, {
     raw: {
       width, height,
       channels: 4
     }
-  }).png().toFile(realPath);
+  }).png().toBuffer();
 }
 
 export function putImage(

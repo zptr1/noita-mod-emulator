@@ -1,6 +1,6 @@
 import { DEFAULT_GLOBALS, DEFAULT_SESSION_NUMBERS, EMULATOR } from "./const";
 
-export const SETTINGS = new Map<string, any>().set(EMULATOR, true);
+export const SETTINGS = new Map<string, [any, any]>().set(EMULATOR, [true, true]);
 export const SETTING_KEYS: string[] = [EMULATOR];
 
 export const LOCALE = new Map<string | symbol, string>();

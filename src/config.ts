@@ -3,7 +3,16 @@ import { LUA_DEFAULT_LIBS, LUA_UNSAFE_LIBS } from "./const";
 import { join as pjoin } from "node:path";
 import { existsSync } from "node:fs";
 
+export enum LogLevel {
+  Debug = 0,
+  Trace = 1,
+  Info = 2,
+  Warn = 3,
+  Error = 4,
+}
+
 export const config = {
+  logLevel: LogLevel.Debug,
   worldSeed: 0,
   gamePath: tryFindGameDir(),
   workshopPath: tryFindWorkshopDir(),

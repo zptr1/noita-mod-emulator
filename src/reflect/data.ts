@@ -1,5 +1,5 @@
 import { Context } from "../context";
-import { printLog } from "../log";
+import { printTrace } from "../log";
 
 // TODO
 
@@ -22,7 +22,7 @@ export function getSpells() {
     }
   });
 
-  printLog("Reflect", "Retrieved", spells.length, "spells from gun_collect_metadata.lua");
+  printTrace("Reflect", "Retrieved", spells.length, "spells from gun_collect_metadata.lua");
   return spells;
 }
 
@@ -36,7 +36,7 @@ export function getPerks() {
     }
   });
 
-  printLog("Reflect", "Retrieved", perks.length, "perks from perk_eflect.lua");
+  printTrace("Reflect", "Retrieved", perks.length, "perks from perk_eflect.lua");
   return perks;
 }
 
@@ -50,6 +50,6 @@ export function getStatusEffects() {
     }
   });
 
-  printLog("Reflect", "Retrieved", statusEffects.length, "status effects from status_reflect.lua");
+  printTrace("Reflect", "Retrieved", statusEffects.length, "status effects from status_reflect.lua");
   return statusEffects;
 }

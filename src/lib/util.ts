@@ -1,8 +1,9 @@
-import { EMULATOR_PATH, EXPECTED_LUA_VERSION, EXPECTED_LUAJIT_VERSION } from "../const";
+import { EMULATOR_PATH, EXPECTED_LUA_VERSION, EXPECTED_LUAJIT_VERSION, RE_INVALID_FILE_CHARS, RE_RESERVED_NAME_WINDOWS } from "../const";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { basename, join as pjoin, relative } from "node:path";
 import { LuaState } from "lua-state";
 import cl from "chalk";
+import { printWarn } from "../log";
 
 // Moved from vfs/files.ts to fix circular imports
 export function resolvePath(path: string) {
@@ -43,7 +44,7 @@ export function checkLuaVersion() {
   versionChecked = true;
 
   const version = new LuaState().getVersion();
-  console.log("Running", version);
+  console.log(cl.gray("Running", version));
   if (!version.includes(EXPECTED_LUA_VERSION) || !version.includes(EXPECTED_LUAJIT_VERSION)) {
     console.error(`Invalid version. Expected ${EXPECTED_LUA_VERSION} compiled with ${EXPECTED_LUAJIT_VERSION}`);
     console.error(`Recompile the lua-state library with the correct version:`);
@@ -89,4 +90,51 @@ export function tryFindWorkshopDir() {
     "~/.local/share/Steam/steamapps/workshop/content/881100",
     "~/.var/app/com.valvesoftware.Steam/.local/share/Steam/steamapps/workshop/content/881100"
   ]);
+}
+
+// better safe than sorry lol
+export function validatePath(path: string, outDir: string) {
+  const parts = path.split("/");
+  const out: string[] = [];
+
+  for (const str of parts) {
+    const part = str.trim();
+
+    if (!part || part == ".") continue;
+    if (part == "..") {
+      out.pop();
+      continue;
+    }
+
+    if (part.length > 255) {
+      printWarn("VFS", `Invalid file: ${path} (too long)`);
+      return false;
+    }
+
+    if (RE_INVALID_FILE_CHARS.test(part) || part.endsWith(".")) {
+      printWarn("VFS", `Invalid file: ${path} (invalid characters)`);
+      return false;
+    }
+
+    if (process.platform == "win32" && RE_RESERVED_NAME_WINDOWS.test(part)) {
+      printWarn("VFS", `Invalid file: ${path} (reserved file name)`);
+      return false;
+    }
+
+    out.push(part);
+  }
+
+  if (out.length > 20) {
+    printWarn("VFS", `Invalid file: ${path} (too deep)`);
+    return false;
+  }
+
+  const res = out.join("/");
+  const outPath = pjoin(outDir, res);
+  if (!outPath.startsWith(outDir)) {
+    printWarn("VFS", `Invalid file: ${path} (escaped bounds somehow??? resolved as ${outPath})`);
+    return false;
+  }
+
+  return outPath;
 }

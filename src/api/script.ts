@@ -3,7 +3,7 @@ import { arrayToLua, resolvePath } from "../lib/util";
 import { fileChangeLog } from "../reflect/vfs";
 import { LUA_APPENDS } from "../storage";
 import { Context } from "../context";
-import { printDebug } from "../log";
+import { printTrace } from "../log";
 import { config } from "../config";
 
 export function __normalize_path(path: string) {
@@ -70,7 +70,7 @@ export function ModLuaFileGetAppends(path: string) {
 }
 
 export function ctx$SetTimeOut(ctx: Context, delay: number, path: string, fname?: string) {
-  printDebug("LUA", `Scheduled ${path} in ${delay}s`);
+  printTrace("LUA", `Scheduled ${path} in ${delay}s`);
   
   setTimeout(() => {
     const timeCtx = new Context(ctx.id.replace(":timeout", "") + ":timeout");

@@ -2,10 +2,14 @@ import { arrayToLua, resolvePath } from "./lib/util";
 import { join as pjoin } from "node:path";
 import { LuaLibName } from "lua-state";
 
+export const VERSION = "0.0.1";
+
 // This string will be reported as an enabled mod or a setting
 export const EMULATOR = "NOITA_EMULATOR";
 export const EMULATOR_PATH = pjoin(import.meta.dirname, "../");
 
+// LuaState.getVersion() returns a string like "Lua 5.1 (compiled with LuaJIT 2.1.1761727121)"
+// we expect Lua 5.1 and LuaJIT 2.1, everything else shouldn't matter
 export const EXPECTED_LUA_VERSION = "Lua 5.1";
 export const EXPECTED_LUAJIT_VERSION = "LuaJIT 2.1";
 
@@ -65,6 +69,8 @@ export const DEFAULT_STATS = {
   "death_pos": arrayToLua([0, 0]),
 } as const;
 
+// Idfk what are these supposed to be
+// Some mods were broken cause they kept accessing invalid globals...
 export const DEFAULT_GLOBALS = {
   "NEW_GAME_PLUS_ITERATION": "0",
 } as const;
@@ -72,3 +78,7 @@ export const DEFAULT_GLOBALS = {
 // Writing to this file will reset the loaded locale (if its loaded)
 // so the next GameTextGet/GameTextGetTranslatedOrNot is up to date
 export const LOCALE_PATH = resolvePath("data/translations/common.csv");
+
+// Used by the CLI for exporting the VFS to
+export const RE_INVALID_FILE_CHARS = /[\x00-\x1F<>:"\/\\|?*]/;
+export const RE_RESERVED_NAME_WINDOWS = /^(con|prn|aux|nul|com\d|lpt\d)$/i;

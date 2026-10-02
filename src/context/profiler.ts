@@ -1,5 +1,4 @@
-import { writeFileSync } from "node:fs";
-import { printLog } from "../log";
+import { printLog, printTrace } from "../log";
 import type { Context } from ".";
 
 export let profilerEnabled = false;
@@ -89,7 +88,7 @@ export function createProfiler(ctx: Context) {
 }
 
 export function stop() {
-  printLog("Profiler", `Profiler stopped; collected ${graph.length} samples`);
+  printTrace("Profiler", `Profiler stopped; collected ${graph.length} samples`);
 
   profilerEnabled = false;
   collectingCallCounts = false;
@@ -109,9 +108,4 @@ export function getFlameGraph() {
       }${x.label} ${Math.round(x.value)}`
     ))
     .join("\n");
-}
-
-/** Use https://speedscope.app/ for viewing the graph */
-export function exportFlameGraph(file: string) {
-  writeFileSync(file, getFlameGraph());
 }

@@ -12,11 +12,11 @@ You can use this tool to
 
 ## Install
 
+You need to have LuaJIT installed on your system including its development headers and libraries. You also need development tools (`node-gyp`, `gcc`, ...).
+
+Noita uses **Lua 5.1** compiled with **LuaJIT 2.1** for mods. This emulator requires the same version, or some mods will be broken. This tool will try to install with the correct Lua version, but if you still have the wrong version, try running [`scripts/build-lua.mjs`](./scripts/build-lua.mjs); it'll try to install the right one.
+
 TODO: should i just publish the package?
-
-You need to have LuaJIT installed on your system.
-
-**bun** is recommended for running, as it has a much faster FFI than node. **Deno** should also be a good replacement, albeit not tested yet.
 
 ## CLI
 

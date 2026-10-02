@@ -1,11 +1,11 @@
 import { parse } from "csv-parse/sync";
-import { printDebug } from "../../log";
+import { printTrace } from "../../log";
 import { LOCALE } from "../../storage";
-import { getFile } from "../../vfs";
 import { config } from "../../config";
+import { getFile } from "../../vfs";
 
 function loadLocale() {
-  printDebug("API", "Parsing locale");
+  printTrace("API", "Parsing locale");
   const data = parse(getFile("data/translations/common.csv") || "", {
     relaxColumnCount: true,
     relaxQuotes: true,

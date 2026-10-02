@@ -1,7 +1,7 @@
 import { fileBlame, files, NULL, realFilePath, unreadFiles } from "./files";
 import { readdirSync, readFileSync } from "node:fs";
 import { resolvePath } from "../lib/util";
-import { printLog } from "../log";
+import { printLog, printTrace } from "../log";
 import cl from "chalk";
 
 export function loadDirRecursively(realDir: string, virtualDir: string, modId?: string, isMod = false, log = true) {
@@ -56,7 +56,7 @@ export function loadGameData(dataDir: string) {
     files.set(path, content);
   }
 
-  printLog("VFS", "Loaded", cl.green("data.wak"), "with", fileCount, "files");
+  printTrace("VFS", "Loaded", cl.green("data.wak"), "with", fileCount, "files");
 }
 
 export function loadModData(modId: string, dir: string) {

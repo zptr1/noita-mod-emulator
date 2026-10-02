@@ -1,15 +1,21 @@
 import { applyConfig, baseRun, outFileWithExt, validHook, validOutDir, validOutFilePath } from "./util";
 import { availableMods, loadModList, run } from "../vm";
+import { writeFileSync } from "node:fs";
+import { exporter } from "./exporter";
 import { program } from "commander";
 import { config } from "../config";
+import { profiler } from "..";
 import cl from "chalk";
+import { DEBUG_COLOR, ERROR_COLOR, LOG_COLOR, TRACE_COLOR, WARN_COLOR } from "../log";
 
 program
   .name("noita-emu")
-  .description("Run & debug Noita mods programmaticaly")
-  .helpOption("-h, --help", "Show this message")
+  .description(
+    `${cl.magenta.bold("Noita Mod Emulator")} \n`
+    + "Run and debug Noita mods programmatically outside of the game"
+  )
 
-  .option("--game-dir <path>",
+  .option("-g, --game-dir <path>",
     `Must contain ${cl.yellow("data/data.wak")}\n`
     + `Detected path: ${
       config.gamePath
@@ -32,7 +38,7 @@ program
   
   .option("--translate-reflection", "Resolve translation keys in the exported reflection data (--save-reflection)\n")
 
-  .option("--prof", "Start the profiler and save the flamegraph on exit")
+  .option("-p, --prof", "Start the profiler and save the flamegraph on exit")
   .option("--prof-counts", "Export total call counts instead of durations")
   .option("--prof-file <path>", "Specify where to export the flamegraph to\n", validOutFilePath)
 
@@ -44,13 +50,19 @@ program
   .option("--no-locale", "Do not parse language files")
   .option("--no-biome-map", "Do not generate the biome map\n")
 
-  .option("--seed <number>", "World seed used for PRNG", parseInt, 0)
+  .option(
+    "-l, --log-level <level>",
+    `0: ${DEBUG_COLOR("debug")} (includes mod logs), 1: ${TRACE_COLOR("trace")}, 2: ${LOG_COLOR("info")}, 3: ${WARN_COLOR("warn")}, 4: ${ERROR_COLOR("error")}`,
+    parseInt, 0
+  )
+  .option("-s, --seed <number>", "World seed used for PRNG", parseInt, 0)
+  .helpOption("-h, --help", "Show this message")
 ;
 
 program.command("run")
   .argument("[mods...]", "List of mods")
   .description("Pass a list of mod names or directories. Defaults to the current directory.")
-  .action((args) => {
+  .action(async (args) => {
     const opts = program.opts();
 
     try {
@@ -60,6 +72,30 @@ program.command("run")
     }
 
     run();
+
+    for (const key in exporter) {
+      if (opts[key]) await exporter[key](opts[key], !!opts.translateReflection);
+    }
+
+    if (opts.prof) {
+      profiler.stop();
+      console.log();
+
+      const outFile = opts.profFile || `noita-emu-prof-${Date.now()}.txt`;
+      const graph = profiler.getFlameGraph();
+
+      writeFileSync(outFile, graph);
+
+      console.log(cl.bold(`Exported flame graph to ${cl.green(outFile)}`));
+      console.log(
+        "Use", cl.blue("https://speedscope.app/"),
+        `to view it (numbers are ${cl.bold(
+          opts.profCounts
+            ? "call counts"
+            : "milliseconds"
+        )})`
+      );
+    }
   })
 ;
 
@@ -84,6 +120,7 @@ program.command("mods")
     loadModList();
     console.log(
       [...availableMods.values()]
+        .sort((a, b) => a.id.localeCompare(b.id))
         .map((x) => cl.green(x.id))
         .join(", ")
     );

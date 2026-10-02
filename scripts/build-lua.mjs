@@ -3,13 +3,14 @@ import { existsSync, unlinkSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join as pjoin } from "node:path";
 
+// These are included here in the repo to avoid cross-platform headaches
 const includeDir = pjoin(import.meta.dirname, "include/luajit-2.1");
 
 try {
   const require = createRequire(import.meta.url);
 
-  // why is it dumb
-  const luaState = dirname(require.resolve("lua-state/package.json"));
+  // require.resolve("build/...") didn't work for some reason
+  const luaState = pjoin(require.resolve("lua-state"), "../../");
   const path = pjoin(luaState, "build/Release/lua-state.node");
 
   if (existsSync(path)) {
@@ -21,7 +22,6 @@ try {
 console.log("Building lua-state...");
 
 try {
-  // I am starting to regret writing this entire project in JavaScript...
   execFileSync(
     "npx", [
       "lua-state", "install",

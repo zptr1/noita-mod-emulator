@@ -1,12 +1,13 @@
+import { load, loadModList, postHook, stopRunningHooks } from "../vm";
 import fs, { accessSync, existsSync, readdirSync } from "node:fs";
+import { config, setConfig, validateConfig } from "../config";
 import { dirname, join as pjoin, resolve } from "node:path";
+import { checkLuaVersion, isDir } from "../lib/util";
+import { PLACEHOLDER_FUNCS } from "../context/lua";
 import { LUA_HOOKS } from "../const";
 import { program } from "commander";
-import { checkLuaVersion, isDir } from "../lib/util";
-import { config, setConfig, validateConfig } from "../config";
+import { profiler, API } from "..";
 import cl from "chalk";
-import { load, loadModList, postHook, stopRunningHooks } from "../vm";
-import { profiler } from "..";
 
 // Might add a way to save/load config later? to avoid having to pass these arguments all the time
 // probably a `noita-emu.json` file or smth
@@ -46,7 +47,7 @@ export function outFileWithExt(...exts: string[]) {
 
 export function validOutDir(path: string) {
   if (isDir(path)) {
-    if (readdirSync(path).length) program.error(`Directory not empty: ${path}`);
+    if (readdirSync(path).length) program.error(`Cowardly refusing to write to a non-empty directory: ${path}`);
     try { accessSync(path, fs.constants.R_OK | fs.constants.W_OK) }
     catch { program.error(`Cannot access ${path}`) }
     return path;
@@ -63,6 +64,7 @@ export function applyConfig(opts: any) {
 
   if (opts.unsafeApi) newConfig.luaUnsafeLibs = true;
   if (opts.seed != config.worldSeed) newConfig.worldSeed = opts.seed;
+  if (opts.logLevel != config.logLevel) newConfig.logLevel = opts.logLevel;
 
   if (!opts.rng) newConfig.enablePRNG = false;
   if (!opts.image) newConfig.enableImageEditing = false;
@@ -83,19 +85,36 @@ export function baseRun(opts: any, mods: string[], defaultCurrentDir: boolean) {
   applyConfig(opts);
   loadModList(true);
 
+  if (opts.prof) {
+    profiler.start(opts.profCounts ? "counts" : "duration");
+  }
+
   if (!mods.length && defaultCurrentDir) {
     mods.push(resolve(process.cwd()));
   }
 
   load(mods);
 
-  if (opts.prof) {
-    profiler.start(opts.profCounts ? "counts" : "duration");
-  }
-
   if (opts.stopAfter) {
     postHook(opts.stopAfter, () => {
       stopRunningHooks();
     });
   }
+}
+
+export function getAllAPIs() {
+  const apis = new Set(PLACEHOLDER_FUNCS);
+
+  for (const key in API) {
+    const funcs = API[key];
+    if (typeof funcs != "object") continue;
+
+    for (const fname in funcs) {
+      if (fname[0] == "$") continue;
+      if (fname.startsWith("ctx$")) apis.add(fname.slice(4));
+      else apis.add(fname);
+    }
+  }
+
+  return apis;
 }

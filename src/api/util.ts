@@ -1,7 +1,7 @@
+import { printTrace, printError, printDebug } from "../log";
 import { GameTextGetTranslatedOrNot } from "./data/locale";
 import { activeModsById, activeMods } from "../vm/loader";
 import { biomeMap } from "../reflect/biomemap";
-import { printDebug, printError } from "../log";
 import { Context } from "../context";
 import { EMULATOR } from "../const";
 import { config } from "../config";
@@ -48,7 +48,7 @@ export function GameGetRealWorldTimeSinceStarted() {
 
 export function SetWorldSeed(seed: number) {
   config.worldSeed = seed;
-  printDebug("API", "Seed changed to", seed);
+  printTrace("API", "Seed changed to", seed);
 }
 
 export function ctx$print(ctx: Context, ...text: string[]) {
@@ -65,11 +65,11 @@ export function ctx$DEBUG_MARK(
   r: number, g: number, b: number
 ) {
   const color = cl.rgb(Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255));
-  printDebug(`DEBUG_MARK (${ctx.id}) @ ${x}, ${y}`, color(message));
+  printTrace(`DEBUG_MARK (${ctx.id}) @ ${x}, ${y}`, color(message));
 }
 
 export function ctx$GamePrintImportant(ctx: Context, title: string, description: string) {
-  printDebug(
+  printTrace(
     `GamePrintImportant (${ctx.id})`,
     cl.bold.yellow(GameTextGetTranslatedOrNot(title))
   );

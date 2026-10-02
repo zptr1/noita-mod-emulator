@@ -6,7 +6,7 @@ export function ModSettingSet(key: string, value: any) {
     SETTING_KEYS.push(key);
     SETTINGS.set(key, [value, null]);
   } else {
-    SETTINGS.get(key)[0] = value;
+    SETTINGS.get(key)![0] = value;
   }
 }
 
@@ -16,7 +16,7 @@ export function ModSettingSetNextValue(key: string, value: any) {
     SETTING_KEYS.push(key);
     SETTINGS.set(key, [null, value]);
   } else {
-    SETTINGS.get(key)[1] = value;
+    SETTINGS.get(key)![1] = value;
   }
 }
 
@@ -34,7 +34,7 @@ export const ModSettingGetCount = () => SETTING_KEYS.length;
 export function ModSettingGetAtIndex(idx: number) {
   const key = SETTING_KEYS[idx];
   if (!key) return null;
-  if (!SETTINGS.has(key)) return [key, null, null];
 
-  return [key, ...SETTINGS.get(key)!];
+  const setting = SETTINGS.get(key) ?? [null, null];
+  return [key, ...setting];
 }
