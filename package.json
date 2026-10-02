@@ -1,16 +1,29 @@
 {
+  "name": "noita-mod-emulator",
+  "author": {
+    "name": "zptr1",
+    "url": "https://yui.dev"
+  },
   "type": "module",
+  "bin": {
+    "noita-emu": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "node scripts/bundle",
+    "postinstall": "node scripts/bundle"
+  },
   "dependencies": {
-    "@types/pngjs": "^6.0.5",
     "chalk": "^6.0.1",
+    "commander": "^15.0.0",
     "csv-parse": "^7.0.3",
+    "esbuild": "latest",
     "fast-xml-parser": "^5.11.1",
     "lua-state": "^1.2.0",
     "pngjs": "^7.0.0",
-    "raylib": "^0.14.0",
     "sharp": "^0.35.5"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@types/pngjs": "^6.0.5"
   }
 }

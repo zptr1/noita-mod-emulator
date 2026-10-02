@@ -3,6 +3,7 @@ import { printLog } from "../log";
 import type { Context } from ".";
 
 export let profilerEnabled = false;
+export let collectingCallCounts = false;
 
 export const callStack: StackFrame[] = [];
 export const graph: GraphEvent[] = [];
@@ -20,13 +21,16 @@ export interface GraphEvent {
   label: string;
   stack: string[];
   start: number;
-  duration: number;
-  count: number;
+  value: number;
 }
 
-export function start() {
+export function start(type: "duration" | "counts" = "duration") {
   printLog("Profiler", "Started profiler");
+
   profilerEnabled = true;
+  if (type == "counts") {
+    collectingCallCounts = true;
+  }
 }
 
 export function createProfiler(ctx: Context) {
@@ -50,17 +54,16 @@ export function createProfiler(ctx: Context) {
     },
   
     end(label: string) {
-      const end = performance.now();
       const frame = callStack.pop();
       if (!frame || frame.label != label) return;
 
-      const duration = end - frame.start;
+      const value = collectingCallCounts ? 1 : performance.now() - frame.start;
       const parent = callStack.at(-1);
+
       if (parent) {
         const event = parent.children.get(label);
         if (event) {
-          event.duration += duration;
-          event.count++;
+          event.value += value;
           return;
         }
       }
@@ -69,8 +72,7 @@ export function createProfiler(ctx: Context) {
         id, label,
         stack: callStack.map((x) => x.label),
         start: frame.start,
-        duration,
-        count: 1,
+        value: value
       };
 
       if (parent) parent.children.set(label, event);
@@ -86,29 +88,30 @@ export function createProfiler(ctx: Context) {
   return profiler;
 }
 
-type GraphKey = "count" | "duration";
-
 export function stop() {
-  profilerEnabled = false;
   printLog("Profiler", `Profiler stopped; collected ${graph.length} samples`);
+
+  profilerEnabled = false;
+  collectingCallCounts = false;
 }
 
 /** Use https://speedscope.app/ for viewing the graph */
-export function getFlameGraph(key: GraphKey = "count") {
+export function getFlameGraph() {
+  // TODO: use speedscope's json format?
   return graph
-    .filter((x) => x.duration >= 1)
+    .filter((x) => x.value >= 1)
     .sort((a, b) => a.start - b.start)
     .map((x) => (
       `${x.id};${
         x.stack.length > 0
           ? x.stack.join(";") + ";"
           : ""
-      }${x.label} ${Math.round(x[key])}`
+      }${x.label} ${Math.round(x.value)}`
     ))
     .join("\n");
 }
 
 /** Use https://speedscope.app/ for viewing the graph */
-export function exportFlameGraph(file: string, key?: GraphKey) {
-  writeFileSync(file, getFlameGraph(key));
+export function exportFlameGraph(file: string) {
+  writeFileSync(file, getFlameGraph());
 }

@@ -1,9 +1,9 @@
 import { Img, loadImage, putImage, swap32 } from "../../lib/img";
 import { MAGIC_NUMBERS, SESSION_NUMBERS } from "../../storage";
+import { printError, printLog, printWarn } from "../../log";
 import { resolvePath } from "../../lib/util";
 import { getFileBinary } from "../../vfs";
 import { Context } from "../../context";
-import { printLog } from "../../log";
 
 export const biomeMap: Img = {
   width: 0, height: 0,
@@ -13,16 +13,20 @@ export const biomeMap: Img = {
 export let biomeMapFile = "";
 
 export function loadBiomeMap() {
+  if (biomeMapFile) {
+    printWarn("Reflect", "Biome map has already been loaded");
+  }
+
   const file = MAGIC_NUMBERS.get("BIOME_MAP");
   if (typeof file != "string") {
-    console.error("Missing BIOME_MAP magic number");
+    printError("Reflect", "Missing BIOME_MAP magic number");
     return;
   }
 
   biomeMapFile = resolvePath(file);
 
   if (file.endsWith(".lua")) {
-    generateBiomeMap(file);
+    generateBiomeMap(file, biomeMap);
   } else {
     const img = loadImage(getFileBinary(file)!);
     if (img) {
@@ -38,31 +42,31 @@ export function loadBiomeMap() {
   SESSION_NUMBERS.set("BIOME_MAP", biomeMapFile);
 }
 
-export function generateBiomeMap(file: string) {
+export function generateBiomeMap(file: string, img: Img) {
   const ctx = new Context("reflect:biome-map");
 
   ctx.execFileWithAPI(file, {
     BiomeMapSetSize(width: number, height: number) {
-      biomeMap.width = width;
-      biomeMap.height = height;
-      biomeMap.buffer = new Uint32Array(width * height);
+      img.width = width;
+      img.height = height;
+      img.buffer = new Uint32Array(width * height);
     },
 
     BiomeMapGetPixel(x: number, y: number) {
-      if (x >= biomeMap.width || y >= biomeMap.height || x < 0 || y < 0) return 0;
-      return biomeMap.buffer[y * biomeMap.width + x];
+      if (x >= img.width || y >= img.height || x < 0 || y < 0) return 0;
+      return img.buffer[y * img.width + x];
     },
 
     BiomeMapSetPixel(x: number, y: number, color: number) {
-      if (x >= biomeMap.width || y >= biomeMap.height || x < 0 || y < 0) return;
-      biomeMap.buffer[y * biomeMap.width + x] = color;
+      if (x >= img.width || y >= img.height || x < 0 || y < 0) return;
+      img.buffer[y * img.width + x] = color;
     },
     
     BiomeMapConvertPixelFromUintToInt: swap32,
 
     BiomeMapLoadImage(x: number, y: number, path: string) {
       putImage(
-        biomeMap, loadImage(getFileBinary(path)!)!,
+        img, loadImage(getFileBinary(path)!)!,
         x, y
       );
     },
@@ -75,7 +79,7 @@ export function generateBiomeMap(file: string) {
       iw: number, ih: number
     ) {
       putImage(
-        biomeMap, loadImage(getFileBinary(path)!)!,
+        img, loadImage(getFileBinary(path)!)!,
         x, y, ix, iy, iw, ih
       );
     }

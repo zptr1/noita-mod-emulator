@@ -2,9 +2,8 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { basename, join as pjoin } from "node:path";
 import { loadGameData, loadModData } from "../vfs";
 import { Context } from "../context";
-import { config } from "../config";
 import { isDir } from "../lib/util";
-import { printLog } from "../log";
+import { config } from "../config";
 
 export interface Mod {
   id: string;
@@ -30,6 +29,10 @@ export function getModId(dir: string) {
 
 export function loadModFromDir(path: string, id: string = getModId(path)) {
   if (!isDir(path)) throw new Error(`Unknown mod: ${path}`);
+
+  if (!existsSync(pjoin(path, "mod.xml"))) {
+    throw new Error(`Invalid mod ${path}: missing mod.xml`);
+  }
 
   loadModData(id, path);
 
@@ -69,14 +72,14 @@ export function loadModListFromDir(dir: string) {
 }
 
 let modsLoaded = false;
-export function loadModList() {
-  if (modsLoaded) return;
+export function loadModList(force = false) {
+  if (modsLoaded && !force) return;
   modsLoaded = true;
 
-  loadModListFromDir(pjoin(config.gamePath || "", "mods"));
-  loadModListFromDir(config.workshopPath || "");
-
-  printLog("VM", "Detected", availableMods.size, "available mods");
+  try {
+    loadModListFromDir(pjoin(config.gamePath || "", "mods"));
+    loadModListFromDir(config.workshopPath || "");
+  } catch {}
 }
 
 export function load(mods: string[]) {

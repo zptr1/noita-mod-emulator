@@ -1,9 +1,16 @@
 import { arrayToLua, resolvePath } from "./lib/util";
 import { join as pjoin } from "node:path";
+import { LuaLibName } from "lua-state";
 
 // This string will be reported as an enabled mod or a setting
 export const EMULATOR = "NOITA_EMULATOR";
 export const EMULATOR_PATH = pjoin(import.meta.dirname, "../");
+
+export const EXPECTED_LUA_VERSION = "Lua 5.1";
+export const EXPECTED_LUAJIT_VERSION = "LuaJIT 2.1";
+
+export const LUA_DEFAULT_LIBS: LuaLibName[] = ["base", "string", "table", "math", "utf8", "bit32"];
+export const LUA_UNSAFE_LIBS: LuaLibName[] = [...LUA_DEFAULT_LIBS, "debug", "io", "os", "package"];
 
 // All lua hook names in their call order
 export const LUA_HOOKS = [

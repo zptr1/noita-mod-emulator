@@ -1,12 +1,13 @@
 import { createProfiler, Profiler, profilerEnabled } from "./profiler";
 import { LuaFunction, LuaState } from "lua-state";
+import { config, getLuaLibs } from "../config";
 import { luaBitLib } from "../lib/bit";
+import { printError } from "../log";
 import { getLuaInit } from "./lua";
-import { config } from "../config";
 import * as API from "../api";
 
 export class Context {
-  public readonly lua = new LuaState({ libs: config.luaLibs });
+  public readonly lua = new LuaState({ libs: getLuaLibs() });
 
   private readonly definedGlobals = new Set<string>();
   private profiler?: Profiler;
@@ -85,7 +86,7 @@ export class Context {
         ? this.dofileOnce(file)
         : this.dofile(file);
     } catch (err) {
-      console.error(err.toString());
+      printError("VM", err.toString());
     }
   }
 

@@ -1,6 +1,8 @@
+import { EMULATOR_PATH, EXPECTED_LUA_VERSION, EXPECTED_LUAJIT_VERSION } from "../const";
 import { existsSync, readFileSync, statSync } from "node:fs";
-import { join as pjoin } from "node:path";
-import { EMULATOR_PATH } from "../const";
+import { basename, join as pjoin } from "node:path";
+import { LuaState } from "lua-state";
+import cl from "chalk";
 
 // Moved from vfs/files.ts to fix circular imports
 export function resolvePath(path: string) {
@@ -33,6 +35,17 @@ export function getLuaScript(path: string) {
 
 export function isDir(path: string) {
   return existsSync(path) && statSync(path).isDirectory();
+}
+
+export function checkLuaVersion() {
+  const version = new LuaState().getVersion();
+  console.log("Running", version);
+  if (!version.includes(EXPECTED_LUA_VERSION) || !version.includes(EXPECTED_LUAJIT_VERSION)) {
+    console.error(`Invalid version. Expected ${EXPECTED_LUA_VERSION} compiled with ${EXPECTED_LUAJIT_VERSION}`);
+    console.error(`Recompile the lua-state library with the correct version:`);
+    console.error(cl.yellow(` > ${basename(process.execPath)} scripts/build-lua.js`));
+    process.exit(1);
+  }
 }
 
 export function tryFindDir(list: string[]) {
