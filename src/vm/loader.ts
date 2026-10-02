@@ -86,7 +86,7 @@ export function loadModList(force = false) {
 
 export function load(mods: string[]) {
   if (!gameCtx) {
-    gameCtx = new Context();
+    gameCtx = new Context("vanilla");
     const path = pjoin(config.gamePath || "", "data");
     
     if (!config.gamePath || !isDir(path)) {

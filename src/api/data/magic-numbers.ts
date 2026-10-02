@@ -1,6 +1,6 @@
 import { MAGIC_NUMBERS } from "../../storage";
 import { parseXML } from "../../lib/xml";
-import { printTrace } from "../../log";
+import { printTrace, printWarn } from "../../log";
 import { getFile } from "../../vfs";
 
 let magicNumberFiles: Set<string> | null = new Set();
@@ -23,8 +23,7 @@ export function $loadMagicNumbers() {
 
       printTrace("API", "Loaded", count, "magic numbers from", file);
     } catch (err) {
-      console.warn(`Error loading magic numbers from ${file}`);
-      console.warn(err);
+      printWarn("API", `Error loading magic numbers from ${file}: ${err.stack || err}`);
     }
   }
 

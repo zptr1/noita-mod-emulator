@@ -1,3 +1,5 @@
-export * from "./data";
+export * from "./perks";
+export * from "./spells";
+export * from "./statuseffect";
 export * from "./biomemap";
 export * from "./vfs";

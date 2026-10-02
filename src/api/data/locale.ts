@@ -4,7 +4,7 @@ import { LOCALE } from "../../storage";
 import { config } from "../../config";
 import { getFile } from "../../vfs";
 
-function loadLocale() {
+export function $loadLocale() {
   printTrace("API", "Parsing locale");
   const data = parse(getFile("data/translations/common.csv") || "", {
     relaxColumnCount: true,
@@ -17,6 +17,7 @@ function loadLocale() {
   }
 
   LOCALE.set("", "");
+  return LOCALE;
 }
 
 export function GameTextGetTranslatedOrNot(text: string) {
@@ -28,7 +29,7 @@ export function GameTextGetTranslatedOrNot(text: string) {
 export function GameTextGet(key: string, ...params: string[]) {
   if (!config.enableLocalization) return key;
 
-  if (!LOCALE.size) loadLocale();
+  if (!LOCALE.size) $loadLocale();
   if (key.length == 1) return "en";
   if (!key) throw new Error("Crash! GameTextGet() called with an empty key");
 

@@ -87,8 +87,10 @@ export function createProfiler(ctx: Context) {
   return profiler;
 }
 
-export function stop() {
-  printTrace("Profiler", `Profiler stopped; collected ${graph.length} samples`);
+export function stop(silent = false) {
+  if (!silent) {
+    printTrace("Profiler", `Profiler stopped; collected ${graph.length} samples`);
+  }
 
   profilerEnabled = false;
   collectingCallCounts = false;

@@ -2,8 +2,8 @@ import { EMULATOR_PATH, EXPECTED_LUA_VERSION, EXPECTED_LUAJIT_VERSION, RE_INVALI
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { basename, join as pjoin, relative } from "node:path";
 import { LuaState } from "lua-state";
+import { printErrorPlain, printWarn } from "../log";
 import cl from "chalk";
-import { printWarn } from "../log";
 
 // Moved from vfs/files.ts to fix circular imports
 export function resolvePath(path: string) {
@@ -44,13 +44,16 @@ export function checkLuaVersion() {
   versionChecked = true;
 
   const version = new LuaState().getVersion();
-  console.log(cl.gray("Running", version));
-  if (!version.includes(EXPECTED_LUA_VERSION) || !version.includes(EXPECTED_LUAJIT_VERSION)) {
-    console.error(`Invalid version. Expected ${EXPECTED_LUA_VERSION} compiled with ${EXPECTED_LUAJIT_VERSION}`);
-    console.error(`Recompile the lua-state library with the correct version:`);
+  console.log(cl.blue("Running", version));
 
+  if (!version.includes(EXPECTED_LUA_VERSION) || !version.includes(EXPECTED_LUAJIT_VERSION)) {
     const scriptPath = relative(process.cwd(), pjoin(EMULATOR_PATH, "scripts/build-lua.mjs"));
-    console.error(cl.yellow(` > ${basename(process.execPath)} ${scriptPath}`));
+
+    printErrorPlain(
+      `Invalid version. Expected ${EXPECTED_LUA_VERSION} compiled with ${EXPECTED_LUAJIT_VERSION}\n`
+      + `Recompile the lua-state library with the correct version:\n`
+      + ` > ${basename(process.execPath)} ${scriptPath}`
+    );
 
     process.exit(1);
   }
@@ -137,4 +140,26 @@ export function validatePath(path: string, outDir: string) {
   }
 
   return outPath;
+}
+
+export function removeFalsyValues<T>(obj: T, out: any = {}): T {
+  for (const key in obj) {
+    const val = obj[key];
+    if (val) {
+      out[key] = val;
+    }
+  }
+
+  return out;
+}
+
+export function removeNullishValues<T>(obj: T, out: any = {}): T {
+  for (const key in obj) {
+    const val = obj[key];
+    if (typeof val != "undefined" && val !== null) {
+      out[key] = val;
+    }
+  }
+
+  return out;
 }

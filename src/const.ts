@@ -2,7 +2,7 @@ import { arrayToLua, resolvePath } from "./lib/util";
 import { join as pjoin } from "node:path";
 import { LuaLibName } from "lua-state";
 
-export const VERSION = "0.0.1";
+export const VERSION = "0.1.0";
 
 // This string will be reported as an enabled mod or a setting
 export const EMULATOR = "NOITA_EMULATOR";
@@ -47,7 +47,7 @@ export const DEFAULT_STATS = {
   "dead": false,
   "death_count": 0,
   "streaks": 0,
-  "killed_by": "ur mom",
+  "killed_by": "ur mom", // except this
   "killed_by_extra": "",
   "playtime": 0,
   "playtime_str": "",
@@ -79,6 +79,6 @@ export const DEFAULT_GLOBALS = {
 // so the next GameTextGet/GameTextGetTranslatedOrNot is up to date
 export const LOCALE_PATH = resolvePath("data/translations/common.csv");
 
-// Used by the CLI for exporting the VFS to
+// Used by the CLI when exporting the VFS to reject invalid files
 export const RE_INVALID_FILE_CHARS = /[\x00-\x1F<>:"\/\\|?*]/;
 export const RE_RESERVED_NAME_WINDOWS = /^(con|prn|aux|nul|com\d|lpt\d)$/i;

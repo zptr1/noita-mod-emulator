@@ -1,6 +1,8 @@
 // TODO
+// not included yet
 
 import { parseXML } from "../../lib/xml";
+import { printWarn } from "../../log";
 import { getFile } from "../../vfs";
 
 let materialFiles: Set<string> | null = new Set<string>();
@@ -71,8 +73,7 @@ export function $loadMaterials() {
     try {
       loadMaterialsFrom(file);
     } catch (err) {
-      console.warn("Error loading materiasl from", file);
-      console.warn(err);
+      printWarn("API", `Error loading materiasl from ${file}: ${err.stack || err}`);
     }
   }
   

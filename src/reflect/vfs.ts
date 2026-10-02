@@ -3,16 +3,19 @@ import { fileBlame, strFiles } from "../vfs";
 import { validatePath } from "../lib/util";
 import { resolve } from "node:path";
 import { printLog } from "../log";
+import { callStack, profilerEnabled } from "../context/profiler";
 
-export interface FileChange {
-  action: "write" | "add_append" | "set_appends" | "image";
+type FileChangeAction = "write" | "add_append" | "set_appends" | "image";
+interface FileChange {
+  action: FileChangeAction;
   at: number;
   mod: string;
   path: string;
   script?: string;
+  stackTrace?: string[];
 }
 
-export interface ExportedFile {
+interface ExportedFile {
   path: string;
   virtPath: string;
   content?: string;
@@ -21,6 +24,20 @@ export interface ExportedFile {
 }
 
 export const fileChangeLog: FileChange[] = [];
+
+export function reportFileChange(action: FileChangeAction, mod: string, path: string, script?: string) {
+  const log: FileChange = {
+    action,
+    at: Math.floor(performance.now()),
+    mod, path, script,
+  };
+
+  if (profilerEnabled) {
+    log.stackTrace = callStack.map((x) => x.label);
+  }
+
+  fileChangeLog.push(log);
+}
 
 export function exportVfs(outDir: string) {
   const out: ExportedFile[] = [];

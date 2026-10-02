@@ -1,10 +1,11 @@
 import { mkdirSync, writeFileSync } from "node:fs";
-import { encodeImageToPNG } from "../lib/img";
 import { activeMods, gameCtx, Reflect } from "..";
-import { dirname } from "node:path";
-import { printWarn } from "../log";
-import cl from "chalk";
+import { encodeImageToPNG } from "../lib/img";
 import { getAllAPIs } from "./util";
+import { dirname, join as pjoin, resolve } from "node:path";
+import { printErrorPlain, printWarn } from "../log";
+import cl from "chalk";
+import { translateReflection } from "../reflect/misc";
 
 function formatLuaObject(obj: any, omit?: Set<string>, visited = new Set<any>(), out: any = {}) {
   if (visited.has(obj)) return "<circular object>";
@@ -73,26 +74,58 @@ export const exporter = {
       }
     }
 
-    console.log(cl.bold(`Exporting ${files.length} files to ${outDir}`));
+    console.log(cl.bold(`Exported ${files.length} files to ${outDir}`));
   },
   saveVfsLog(path: string) {
-    
+    const log = Reflect.fileChangeLog;
+
+    if (path.endsWith(".json")) {
+      writeFileSync(path, JSON.stringify(log, null, 2));
+    } else {
+      const fmt = log.map(
+        (x) => `[${
+          x.at.toString().padStart(6, " ")
+        }ms] [${x.mod}] ${x.action.toUpperCase()} ${x.path}${
+          x.script ? " -> " + x.script : ""
+        }${
+          x.stackTrace ? "\n         @ " + x.stackTrace.join(" -> ") : ""
+        }`
+      ).join("\n");
+
+      writeFileSync(path, fmt);
+    }
+
+    console.log(cl.bold(`Saved file change log to ${path} (${log.length} entries)`));
   },
   saveReflection(path: string, translate: boolean) {
-    const spells = Reflect.getSpells();
-    const perks = Reflect.getPerks();
-    const statusEffects = Reflect.getStatusEffects();
+    const f = <T>(x: T, type: string) => translate ? translateReflection(x as any, type) : x;
 
-    console.log(cl.bold(`Saved reflection data to ${path}`))
+    const data = {
+      spells: f(Reflect.getSpells(), "Spell"),
+      perks: f(Reflect.getPerks(), "Perk"),
+      statusEffects: f(Reflect.getStatusEffects(), "Status effect"),
+    };
+
+    writeFileSync(path, JSON.stringify(data, null, 2));
+
+    console.log(cl.bold(`Saved reflection data to ${path}`));
   },
   saveMisc(path: string) {
     
   },
   async saveBiomeMap(path: string) {
     if (!Reflect.biomeMapFile) Reflect.loadBiomeMap();
-    
-    const img = await encodeImageToPNG(Reflect.biomeMap);
+
+    const map = Reflect.biomeMap;
+    if (!map.width || !map.height) {
+      printErrorPlain(`Could not generate the biome map properly`);
+      return;
+    }
+
+    const img = await encodeImageToPNG(map);
     writeFileSync(path, img);
+
+    console.log(cl.bold(`Saved a ${map.width}x${map.height} biome map to ${path}`));
   },
   saveLocale(path: string) {
     

@@ -9,6 +9,7 @@ You can use this tool to
 - debug & test your mods locally
 - generate flame graphs
 - export data from mods (spells, perks, status effects, etc)
+- export debug info (performance flame graphs, dofile/API call counts, all lua globals)
 
 ## Install
 

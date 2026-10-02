@@ -1,5 +1,5 @@
 import { imageBlame, imageFileMap, imageFiles, makeImageEditable } from "../../lib/img";
-import { fileChangeLog } from "../../reflect";
+import { reportFileChange } from "../../reflect";
 import { resolvePath } from "../../lib/util";
 import { Context } from "../../context";
 import { fileExists } from "../../vfs";
@@ -16,7 +16,7 @@ export function ctx$ModImageMakeEditable(ctx: Context, path: string, width: numb
   if (!img) return [0, 0, 0];
 
   if (config.collectFileLog) {
-    fileChangeLog.push({ action: "image", at: performance.now(), mod: ctx.id, path });
+    reportFileChange("image", ctx.id, path);
   }
 
   return [img.id, img.width, img.height];

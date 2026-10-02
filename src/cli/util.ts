@@ -4,6 +4,7 @@ import { config, setConfig, validateConfig } from "../config";
 import { dirname, join as pjoin, resolve } from "node:path";
 import { checkLuaVersion, isDir } from "../lib/util";
 import { PLACEHOLDER_FUNCS } from "../context/lua";
+import { errorCount, warningCount } from "../log";
 import { LUA_HOOKS } from "../const";
 import { program } from "commander";
 import { profiler, API } from "..";
@@ -23,7 +24,6 @@ export function validHook(opt: string) {
 
 export function validOutFilePath(path: string) {
   const dir = dirname(path);
-  if (existsSync(path)) program.error(`Already exists: ${dir}`);
   if (!isDir(dir)) program.error(`Not a directory: ${dir}`);
   try { accessSync(dir, fs.constants.R_OK | fs.constants.W_OK); }
   catch { program.error(`Cannot access ${dir}`); }
@@ -117,4 +117,19 @@ export function getAllAPIs() {
   }
 
   return apis;
+}
+
+export function finish() {
+  console.log();
+  console.log(
+    `Execution finished with`,
+    errorCount ? cl.red(errorCount) : cl.green(0),
+    `error${errorCount == 1 ? "" : "s"} and`,
+    warningCount ? cl.yellow(warningCount) : cl.green(0),
+    `warning${warningCount == 1 ? "" : "s"}`
+  );
+
+  if (errorCount) {
+    process.exit(1);
+  }
 }

@@ -1,3 +1,4 @@
+import { printWarn } from "../log";
 import { getFileBinary } from "../vfs";
 import { resolvePath } from "./util";
 import { PNG } from "pngjs";
@@ -32,8 +33,7 @@ export function loadImage(buffer: Buffer, path?: string): Img | undefined {
       buffer: view
     };
   } catch (err) {
-    console.warn(`Error loading image ${path || "[Buffer]"}`);
-    console.warn(err);
+    printWarn("API", `Error loading image from ${path || "[Buffer]"}: ${err.stack || err}`);
     return;
   }
 }
