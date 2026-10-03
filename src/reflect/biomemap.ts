@@ -1,6 +1,6 @@
 import { Img, loadImage, putImage, swap32 } from "../lib/img";
 import { MAGIC_NUMBERS, SESSION_NUMBERS } from "../storage";
-import { printError, printLog, printWarn } from "../log";
+import { printError, printTrace, printWarn } from "../log";
 import { resolvePath } from "../lib/util";
 import { getFileBinary } from "../vfs";
 import { Context } from "../context";
@@ -36,7 +36,7 @@ export function loadBiomeMap() {
     }
   }
 
-  printLog("Reflect", `Loaded a ${biomeMap.width}x${biomeMap.height} biome map from ${biomeMapFile}`);
+  printTrace("Reflect", `Loaded a ${biomeMap.width}x${biomeMap.height} biome map from ${biomeMapFile}`);
 
   SESSION_NUMBERS.set("is_biome_map_initialized", "true");
   SESSION_NUMBERS.set("BIOME_MAP", biomeMapFile);
@@ -47,6 +47,14 @@ export function generateBiomeMap(file: string, img: Img) {
 
   ctx.execFileWithAPI(file, {
     BiomeMapSetSize(width: number, height: number) {
+      if (!width || !height) {
+        printWarn("Reflect", `BiomeMapSetSize called with an invalid size (${width}x${height})`);
+      }
+
+      if (img.width || img.height) {
+        printWarn("Reflect", `BiomeMapSetSize called again (${img.width}x${img.height} -> ${width}x${height})`);
+      }
+
       img.width = width;
       img.height = height;
       img.buffer = new Uint32Array(width * height);
