@@ -1,5 +1,5 @@
 import { applyConfig, cliError, outFileWithExt, PERMANENT_GAME_PATH, setGameDir, validHook, validJSON, validLocale, validOutDir, validOutFilePath } from "./util";
-import { VERSION, config, availableMods, loadModList, validateConfig } from "..";
+import { VERSION, config, availableMods, detectMods, validateConfig } from "..";
 import { ERROR_COLOR, LOG_COLOR, TRACE_COLOR, WARN_COLOR } from "../log";
 import { runCommand } from "./commands/run";
 import { writeFileSync } from "node:fs";
@@ -101,7 +101,7 @@ program.command("mods")
   .description("Print the list of available mods")
   .action(() => {
     applyConfig(program.opts());
-    loadModList();
+    detectMods();
     console.log(
       [...availableMods.values()]
         .sort((a, b) => a.id.localeCompare(b.id))

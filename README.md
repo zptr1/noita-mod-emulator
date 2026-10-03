@@ -10,7 +10,7 @@ You can use this to
 - quickly test your mods for errors without having to restart the game frequently (the tool has plenty of checks that warn you about common mistakes!)
 - other shit idk
 
-> Keep in mind this tool is **WIP**, not all APIs are implemented properly, some mods might error, and there are many features that I still want to implement. The emulation is not 100% accurate, but as far as I can tell, its the best recreation anyone's made so far.
+> Keep in mind this tool is **WIP**, not all APIs are implemented properly, some mods might error, and there are many features that I still want to implement. The emulation is not 100% accurate, but as far as I know its the best recreation anyone's made so far.
 
 ## Table Of Contents
 
@@ -49,9 +49,7 @@ This will make `noita-emu` usable anywhere as a CLI.
 
 ## Usage
 
-Use `noita-emu` to run the CLI.
-
-The following reference is currently for the CLI only, but you can also use this as a JavaScript library with minimal differences.
+Use `noita-emu` to run the CLI. The following reference is pimarily for the CLI, but you can use this as a JavaScript library too.
 
 ### Config
 
@@ -67,6 +65,8 @@ You can disable several individual modules, which replaces them with blank funct
 - `--no-image` disables image editing (can greatly improve performance depending on the mod)
 - `--no-locale` disables locale file parsing
 - `--no-biome-map` disables biome map generation
+
+If using as a library, call `setConfig({…})` to update the config; this will apply the passed object on top of the defaults.
 
 ### Game Data
 
@@ -87,6 +87,10 @@ The emulator tries to load a list of mods from the game's `mods` folder, and Ste
 When given a mod, the emulator will first try to use that as a mod ID, and will fall back to a directory path if there's no mod with that ID.
 
 You can run `noita-emu mods` to get a list of all detected mods.
+
+**Library APIs:**
+- `detectMods()` detects all available mods and returns a map of `mod ID` -> `{ id, path }`
+- `loadModListFromDir(dir: string)` detects all available mods from the specified directory
 
 ### Running mods
 
@@ -113,6 +117,17 @@ After step 1, execution will continue to the very end even if an error occurs du
 
 You can use the `--stop-after <hook>` flag to stop execution after the specified hook. For example, if you just want to export spells/perks, `OnMagicNumbersAndWorldSeedInitialized` is a good stopping point.
 
+**Library APIs:**
+- `load(mods: string[])` loads the provided list of mods (either by mod ID or path)
+- `loadModById(id)` loads the mod by its ID
+- `loadModFromDir(path)` loads the mod from a directory
+- `preHook(hook, callback)` runs the function before the hook
+- `postHook(hook, callback)` runs the function after the hook
+- `runSettings()` runs mod settings; can only be called once
+- `run()` runs all mods (also does `runSettings` if settings haven't been executed yet)
+- `runHook(hook, ...args)` runs a hook
+- `stop()` stops execution (combine with preHook/postHook)
+
 ### Profiler
 
 **Work in progress**. Output formats and options might change in future versions.
@@ -130,6 +145,12 @@ The duration mode exports numbers in milliseconds. If there are multiple identic
 - this is not a sample-based profiler
 - this only rpeorts API calls and `dofile`/`dofile_once`, its not a full Lua profiler and probably won't be.
 - even if this profiler was accurate and this tool was made in a faster language than JS, the performance will still differ from Noita, because the game has to run the entire pixel simulation engine on top of everything else, and probably a bunch of other mods.
+
+**Library APIs:**
+- `Profiler.start(mode)` starts the profiler (mode is either `"duration"` or `"counts"`)
+- `Profiler.stop()` stops the profiler
+- `Profiler.getFlameGraph()` returns a string of the flamegraph that can be viewed on https://speedscope.app/
+- `Profiler.graph` is the raw graph
 
 ### Reflection
 
@@ -155,6 +176,8 @@ All reflection runs after the end of the execution. Provided file paths must hav
   * Arrays are currently a bit broken (exported using objects with integer keys, instead of using an actual array), sorry!
 
 `--save-reflection` does not resolve localization by default. You can use `--translate-reflection` to automatically translate all translateable text in the output; and `--locale <code>` to change the language if you want something other than English.
+
+**Library APIs:** TBD; check the `Reflect` object
 
 ## Lua API Additions
 

@@ -16,7 +16,8 @@ export let gameCtx: Context;
 export const activeMods: Mod[] = [];
 export const activeModsById = new Map<string, Mod>();
 
-export const availableMods = new Map<string, { path: string, id: string }>();
+export type AvailableModMeta = { path: string, id: string };
+export const availableMods = new Map<string, AvailableModMeta>();
 
 export function getModId(dir: string) {
   const idPath = pjoin(dir, "mod_id.txt");
@@ -59,6 +60,8 @@ export function loadModById(id: string) {
 export function loadModListFromDir(dir: string) {
   if (!isDir(dir)) return false;
 
+  const mods = new Map<string, AvailableModMeta>();
+
   for (const mod of readdirSync(dir)) {
     const path = pjoin(dir, mod);
     if (!isDir(path)) continue;
@@ -69,19 +72,26 @@ export function loadModListFromDir(dir: string) {
       id = readFileSync(idPath, "utf8").trim();
     }
 
-    availableMods.set(id, { path, id });
+    const meta: AvailableModMeta = { path, id };
+
+    availableMods.set(id, meta);
+    mods.set(id, meta);
   }
+
+  return mods;
 }
 
 let modsLoaded = false;
-export function loadModList(force = false) {
-  if (modsLoaded && !force) return;
+export function detectMods(force = false) {
+  if (modsLoaded && !force) return availableMods;
   modsLoaded = true;
 
   try {
     loadModListFromDir(pjoin(config.gamePath || "", "mods"));
     loadModListFromDir(config.workshopPath || "");
   } catch {}
+
+  return availableMods;
 }
 
 export function load(mods: string[]) {
@@ -93,7 +103,7 @@ export function load(mods: string[]) {
       throw new Error(`Could not find Noita's folder. Set it in config.gamePath`);
     }
 
-    loadModList();
+    detectMods();
     loadGameData(path);
   }
 

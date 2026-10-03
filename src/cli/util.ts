@@ -1,4 +1,4 @@
-import { load, loadModList, postHook, stopRunningHooks } from "../vm";
+import { load, detectMods, postHook, stop } from "../vm";
 import fs, { accessSync, existsSync, readdirSync, readFileSync } from "node:fs";
 import { config, setConfig, validateConfig } from "../config";
 import { dirname, join as pjoin, resolve } from "node:path";
@@ -134,7 +134,7 @@ export function baseRun(opts: any, mods: string[], defaultCurrentDir: boolean) {
   checkLuaVersion();
 
   applyConfig(opts);
-  loadModList(true);
+  detectMods(true);
 
   if (opts.prof) {
     profiler.start(opts.profCounts ? "counts" : "duration");
@@ -148,7 +148,7 @@ export function baseRun(opts: any, mods: string[], defaultCurrentDir: boolean) {
 
   if (opts.stopAfter) {
     postHook(opts.stopAfter, () => {
-      stopRunningHooks();
+      stop();
     });
   }
 }

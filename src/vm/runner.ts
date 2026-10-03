@@ -28,11 +28,12 @@ function runCallbacks(args: any[], list?: Function[]) {
   }
 }
 
-export function stopRunningHooks() {
+export function stop() {
   running = false;
 }
 
 export function runHook(hook: LuaHook, ...args: any[]) {
+  initHooks();
   runCallbacks(args, hookPreCallbacks.get(hook));
 
   try {
