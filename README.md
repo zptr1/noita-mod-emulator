@@ -102,14 +102,14 @@ Mods are executed like this, respecting the specified order:
 3. run vanilla game's `data/scripts/init.lua` in the vanilla context
 4. run `init.lua` for every mod in that mod's context
 5. run every hook one by one:
-  - `OnModPreInit`
-  - `OnModInit`
-  - `OnModPostInit`
-  - `OnMagicNumbersAndWorldSeedInitialized`
-  - `OnBiomeConfigLoaded`
-  - `OnWorldPreUpdate`
-  - `OnWorldPostUpdate`
-  - `OnWorldInitialized`
+   * `OnModPreInit`
+   * `OnModInit`
+   * `OnModPostInit`
+   * `OnMagicNumbersAndWorldSeedInitialized`
+   * `OnBiomeConfigLoaded`
+   * `OnWorldPreUpdate`
+   * `OnWorldPostUpdate`
+   * `OnWorldInitialized`
 
 Each hook is first ran in the vanilla context, then in every mod's own context.
 
