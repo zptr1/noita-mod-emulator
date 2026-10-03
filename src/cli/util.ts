@@ -141,7 +141,10 @@ export function baseRun(opts: any, mods: string[], defaultCurrentDir: boolean) {
   }
 
   if (!mods.length && defaultCurrentDir) {
-    mods.push(resolve(process.cwd()));
+    const dir = resolve(process.cwd());
+    if (existsSync(pjoin(dir, "mod.xml"))) {
+      mods.push(dir);
+    }
   }
 
   load(mods);

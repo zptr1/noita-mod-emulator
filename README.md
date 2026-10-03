@@ -91,7 +91,9 @@ You can run `noita-emu mods` to get a list of all detected mods.
 
 ### Running mods
 
-Use `noita-emu run [mods...]` to run mods in the specified order. If you do not pass any mods, this will run the current working directory as a mod, provided it has `mod.xml`.
+Use `noita-emu run [mods...]` to run mods in the specified order.
+
+If you do not pass any mods, this will run the current working directory as a mod, provided it has `mod.xml`. If the current directory does not have `mod.xml`, this will only run the vanilla game.
 
 Mods are executed like this, respecting the specified order:
 1. load vanilla game & all mods to the VFS
