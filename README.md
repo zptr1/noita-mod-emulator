@@ -10,16 +10,18 @@ You can use this to
 - quickly test your mods for errors without having to restart the game frequently (the tool has plenty of checks that warn you about common mistakes!)
 - other shit idk
 
-> Keep in mind this tool is **WIP**, not all APIs are implemented properly, some mods might error, and there are many features that I still want to implement. The emulation is not 100% accurate but as far as I can tell its the best recreation someone's made so far.
+> Keep in mind this tool is **WIP**, not all APIs are implemented properly, some mods might error, and there are many features that I still want to implement. The emulation is not 100% accurate, but as far as I can tell, its the best recreation anyone's made so far.
 
 ## Table Of Contents
 
 - [Install](#install)
-- [CLI](#cli)
+- [Usage](#usage)
   - [Config](#config)
   - [Game Data](#game-data)
   - [Mod List](#mod-list)
   - [Running Mods](#running-mods)
+  - [Profiler](#profiler)
+  - [Reflection](#reflection)
 - [Lua API Additions](#lua-api-additions)
   - [Working with the profiler](#working-with-the-profiler)
 - [List of things that needs further testing](#list-of-things-that-needs-further-testing)
@@ -31,7 +33,7 @@ You need to have LuaJIT installed on your system including its development heade
 
 Noita uses **Lua 5.1** compiled with **LuaJIT 2.1** for mods. This emulator requires the same version, because a lot of mods will be broken otherwise. This tool will try to get the correct Lua version on install, but if you still have the wrong version, try running [`scripts/build-lua.mjs`](./scripts/build-lua.mjs); it'll try to build the right version.
 
-You can install Noita Mod Emulator via **npm**:
+You can install **Noita Mod Emulator** via **npm**:
 ```sh
 $ npm i -g noita-emu
 ```
@@ -44,9 +46,11 @@ $ npm install
 $ npm run build && npm link
 ```
 
-## CLI
+## Usage
 
-Run `noita-emu` for help.
+Use `noita-emu` to run the CLI.
+
+The following reference is currently for the CLI only, but you can also use this as a JavaScript library.
 
 ### Config
 
@@ -163,7 +167,8 @@ When the profiler is enabled, you can use `__perf_begin(label)` and `__perf_end(
 
 There is also `__perf_immediate(label)`, which increments a label's call count when you're using the **call count mode** (`--prof-counts`).
 
-**Make sure you always end started labels, and do not end a label without starting it!** Doing so will break the entire graph from that point forward.
+> [!WARNING]
+> **Make sure you always end started labels, and do not end a label without starting it!** Doing so will break the entire graph from that point forward.
 
 **Tip:** polyfill these functions, so that you can leave them in your code even in-game! Also consider changing to PascalCase for convenience:
 ```lua
@@ -195,9 +200,10 @@ This might or might not lead to issues for some mods. Any help making this more 
 
 ## Sandbox Security
 
-**Noita Mod Emulator does not guarantee any safety for running untrusted mods.**
+> [!CAUTION]
+> **Noita Mod Emulator does not guarantee any safety for running untrusted mods.**
 
-Noita strictly uses **Lua 5.1** compiled with **LuaJIT 2.1** for all mods, so any vulnerabilities for this Lua version apply to Noita, and by extension, this tool.
+Noita strictly uses **Lua 5.1** compiled with **LuaJIT 2.1** for all mods, so any vulnerabilities for this Lua version also apply to Noita, and by extension, this tool. The version **cannot** be updated unless the Noita's developers decide to.
 
 This emulator currently does not impose any memory/CPU usage limits or timeouts on the Lua sandbox either. If you want to run random untrusted mods (e.g. all the mods from Steam workshop), it is highly recommended to run this in an isolated container.
 
