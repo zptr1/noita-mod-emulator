@@ -34,7 +34,7 @@ program
   .option("--save-locale <path>", "Export the locale file (csv/yaml/json)", outFileWithExt("csv", "json", "yaml"))
   .option("--save-lua-globals <path>", "Export all lua globals (json/yaml)\n", outFileWithExt("json", "yaml"))
 
-  .option("--locale <locale>", "Change the locale ('en' by default)", validLocale)
+  .option("--locale <code>", "Change the locale ('en' by default)", validLocale)
   .option("--translate-reflection", "Resolve translation keys in the exported reflection data (--save-reflection)\n")
 
   .option("-p, --prof",

@@ -33,33 +33,34 @@ You need to have LuaJIT installed on your system including its development heade
 
 Noita uses **Lua 5.1** compiled with **LuaJIT 2.1** for mods. This emulator requires the same version, because a lot of mods will be broken otherwise. This tool will try to get the correct Lua version on install, but if you still have the wrong version, try running [`scripts/build-lua.mjs`](./scripts/build-lua.mjs); it'll try to build the right version.
 
-You can install **Noita Mod Emulator** via **npm**:
+<!-- You can install **Noita Mod Emulator** via **npm**:
 ```sh
 $ npm i -g noita-emu
-```
+``` -->
 
-You can also install from repo:
+<!-- To install manually: -->
+**Noita Mod Emulator** is currently not on npm, so you have to install it manually by cloning the repo:
 ```sh
 $ git clone https://github.com/zptr1/noita-mod-emulator
 $ cd noita-mod-emualtor
-$ npm install
-$ npm run build && npm link
+$ npm install && npm run build && npm link
 ```
+This will make `noita-emu` usable anywhere as a CLI.
 
 ## Usage
 
 Use `noita-emu` to run the CLI.
 
-The following reference is currently for the CLI only, but you can also use this as a JavaScript library.
+The following reference is currently for the CLI only, but you can also use this as a JavaScript library with minimal differences.
 
 ### Config
 
-- `--game-dir <dir>` (`-g`): game directory (see [Game Data](#game-data))
+- `--game-dir <dir>` (`-g`): game directory (see the next section)
 - `--log-level <level>` (`-l`): log level (`0` = debug, `1` = trace, `2` = info, `3` = warn, `4` = error). Pass any number higher than the max if you really want to suppress everything.
-- `--seed <seed>` (`-s`): world seed used for the Random API. The emulator has a 100% accurate recreation of Noita's PRNG, so if a mod has e.g. random spells (like FairMod's TMTRAINER spells) this will make the generated output match your world
-- `--locale <locale>`: game's language code to use for translation APIs
+- `--seed <seed>` (`-s`): world seed used for the Random API. The emulator has a 100% accurate recreation of Noita's PRNG, so if a mod has, for example, random spells (like Fairmod's TMTRAINER) this option will make the generated output match your world
+- `--locale <code>`: what language to use for locale APIs (allowed codes are `en`, `ru`, `pt-br`, `es-es`, `de`, `fr-fr`, `it`, `pl`, `zh-cn`, `jp`, `ko`)
 - `--fatal-errors`: makes all errors exit the program instead of continuing execution to the end
-- `--unsafe-api`: enable unsafe Lua APIs. This allows libraries like `io`, `os`, etc. to be used anywhere, so **proceed with caution**. **FFI is not supported**, and this option might get deprecated in the future when I switch to custom WASM bindings.
+- `--unsafe-api`: enable unsafe Lua APIs. This allows libraries like `io`, `os`, etc. to be used anywhere, so **proceed with caution**. Please note that FFI is not supported, and this option might get removed in the future when I switch to custom WASM bindings.
 
 You can disable several individual modules, which replaces them with blank functions:
 - `--no-rng` disables PRNG (all functions return the minimum allowed value)
