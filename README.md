@@ -121,10 +121,10 @@ You can use the `--stop-after <hook>` flag to stop execution after the specified
 - `load(mods: string[])` loads the provided list of mods (either by mod ID or path)
 - `loadModById(id)` loads the mod by its ID
 - `loadModFromDir(path)` loads the mod from a directory
-- `preHook(hook, callback)` runs the function before the hook
-- `postHook(hook, callback)` runs the function after the hook
+- `preHook(hook, listener)` runs the function right before the hook runs
+- `postHook(hook, listener)` runs the function right after the hook finishes running
 - `run()` starts execution
-- `stop()` stops execution (combine with preHook/postHook)
+- `stop()` stops execution (combine with preHook/postHook to control where to stop)
 - `runSettings()` runs mod settings; can only be called once. Automatically called by `run()` if it hasn't been called before
 - `runHook(hook, ...args)` can be used to run a hook manually
 
