@@ -213,13 +213,13 @@ This might or might not lead to issues for some mods. Any help making this more 
 > [!CAUTION]
 > **Noita Mod Emulator does not guarantee any safety for running untrusted mods.**
 
-Noita strictly uses **Lua 5.1** compiled with **LuaJIT 2.1** for all mods, so any vulnerabilities for this Lua version also apply to Noita, and by extension, this tool. The version **cannot** be updated unless the Noita's developers decide to.
+Noita strictly uses **Lua 5.1** compiled with **LuaJIT 2.1** for all mods, so any vulnerabilities for this Lua version also apply to Noita, and by extension, this tool. The version **cannot** be updated unless Noita's devs decide to.
 
 This emulator currently does not impose any memory/CPU usage limits or timeouts on the Lua sandbox either. If you want to run random untrusted mods (e.g. all the mods from Steam workshop), it is highly recommended to run this in an isolated container.
 
 Only these libraries are exposed by default: `base`, `string`, `table`, `math`, `utf8`, `bit`, and the custom recreation of Noita's API. If you run mods with the `--unsafe-api` flag, this adds `debug`, `io`, `os` and `package`.
 
-I plan to switch to a WASM version of the `lua-state` library in the future, so that will probably improve some things.
+I plan to switch to a custom WASM library for running LuaJIT in the future, so that will probably improve some things.
 
 Please do report any vulnerabilities you discover, though, I will try my best to fix them!
 
