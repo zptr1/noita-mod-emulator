@@ -20,7 +20,7 @@ export function getPerks() {
     RegisterPerk(id: string, name: string, description: string, uiIcon: string, perkIcon: string) {
 
       if (definedIds.has(id)) {
-        printError("Reflect", `Perk ${cl.red(id)} is already defined`);
+        printError("Reflect", `Perk ${cl.redBright(id)} is already defined`);
         return;
       }
 

@@ -1,6 +1,6 @@
 import { gameCtx, activeMods } from "./loader";
 import { LUA_HOOKS, LuaHook } from "../const";
-import { printError, printErrorPlain, printLog } from "../log";
+import { printError, printLog } from "../log";
 import { Context } from "../context";
 import { fileExists } from "../vfs";
 import { initHooks } from "./hooks";
@@ -23,7 +23,7 @@ function runCallbacks(args: any[], list?: Function[]) {
   for (const cb of list) {
     try { cb(...args) }
     catch (err) {
-      printErrorPlain(`${err.stack || err}`);
+      printError(`${err.stack || err}`);
     }
   }
 }
@@ -38,16 +38,14 @@ export function runHook(hook: LuaHook, ...args: any[]) {
   try {
     gameCtx.runHook(hook, ...args);
   } catch (err) {
-    printError("VM", "Error running hook", hook, "for vanilla game");
-    printErrorPlain(err.toString());
+    printError("VM", `Error running hook ${hook} for vanilla game: ${err}`);
   }
 
   for (const mod of activeMods) {
     try {
       mod.ctx.runHook(hook, ...args);
     } catch (err) {
-      printError("VM", "Error running hook", hook, "for", mod.id);
-      printErrorPlain(err.toString());
+      printError("VM", `Error running hook ${hook} for ${mod.id}: ${err}`);
     }
   }
   
@@ -74,8 +72,7 @@ export function runSettings() {
       ctx.execFile(path);
       ctx.runHook("ModSettingsUpdate", 0);
     } catch (err) {
-      printError("VM", `Error running settings for ${mod}`);
-      printErrorPlain(err.toString());
+      printError("VM", `Error running settings for ${mod}: ${err}`);
     }
   }
 }
@@ -90,10 +87,6 @@ export function run() {
     if (!running) break;
 
     printLog("VM", "Running hook", hook);
-    try {
-      runHook(hook);
-    } catch (err) {
-      printErrorPlain(err.toString());
-    }
+    runHook(hook);
   }
 }

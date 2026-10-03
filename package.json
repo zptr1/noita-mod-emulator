@@ -1,6 +1,7 @@
 {
   "name": "noita-mod-emulator",
   "description": "Run and debug Noita mods programmatically outside of the game.",
+  "version": "0.0.1",
   "author": {
     "name": "zptr1",
     "url": "https://yui.dev"
@@ -28,6 +29,7 @@
     "commander": "^15.0.0",
     "csv-parse": "^7.0.3",
     "fast-xml-parser": "^5.11.1",
+    "js-yaml": "^5.4.2",
     "lua-state": "^1.2.0",
     "pngjs": "^7.0.0",
     "sharp": "^0.35.5"

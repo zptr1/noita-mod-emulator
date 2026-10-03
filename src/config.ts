@@ -1,5 +1,5 @@
+import { LocaleKey, LUA_DEFAULT_LIBS, LUA_UNSAFE_LIBS } from "./const";
 import { isDir, tryFindGameDir, tryFindWorkshopDir } from "./lib/util";
-import { LUA_DEFAULT_LIBS, LUA_UNSAFE_LIBS } from "./const";
 import { join as pjoin } from "node:path";
 import { existsSync } from "node:fs";
 
@@ -13,9 +13,11 @@ export enum LogLevel {
 
 export const config = {
   logLevel: LogLevel.Debug,
-  worldSeed: 0,
   gamePath: tryFindGameDir(),
   workshopPath: tryFindWorkshopDir(),
+  worldSeed: 0,
+  language: "en" as LocaleKey,
+  fatalErrors: false,
 
   enableImageEditing: true,
   enablePRNG: true,

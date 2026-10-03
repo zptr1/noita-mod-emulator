@@ -1,6 +1,6 @@
+import { resetLocale } from "../reflect/locale";
 import { resolvePath } from "../lib/util";
 import { LOCALE_PATH } from "../const";
-import { LOCALE } from "../storage";
 import { readFileSync } from "fs";
 
 export const files = new Map<string, Buffer>();
@@ -54,7 +54,7 @@ export function setFile(path: string, content: string, blame?: string) {
   }
 
   if (file == LOCALE_PATH) {
-    LOCALE.clear();
+    resetLocale();
   }
 };
 

@@ -1,20 +1,24 @@
-import { baseRun, finish } from "../util";
+import { baseRun, cliError, finish } from "../util";
 import { writeFileSync } from "node:fs";
 import { exporter } from "../exporter";
 import { profiler, run } from "../..";
-import { program } from "commander";
 import cl from "chalk";
 
 export async function runCommand(opts: any, args: any[]) {
   try {
     baseRun(opts, args, true);
   } catch (err) {
-    program.error(err?.message || err);
+    cliError(err?.message || err);
   }
 
-  run();
-  console.log();
+  try {
+    run();
+  } catch {
+    process.exit(1);
+  }
 
+  console.log();
+  
   for (const key in exporter) {
     if (opts[key]) await exporter[key](opts[key], !!opts.translateReflection);
   }

@@ -204,7 +204,9 @@ function parseSpell(args: any[]): Spell {
     ragdollFx: args[56],
     physicsImpulseCoeff: args[58],
     sprite: args[60],
-    extraEntities: args[61] ? args[61].split(",") : undefined,
+    extraEntities: args[61]
+      ? args[61].split(",").filter((x: string) => !!x)
+      : undefined,
     gameEffectEntities: args[62],
     soundLoopTag: args[63],
     projectileFile: args[64],
@@ -224,7 +226,7 @@ export function getSpells() {
       const spellId = args[0];
 
       if (definedIds.has(spellId)) {
-        printError(`Spell ${cl.red(spellId)} is already defined`);
+        printError(`Spell ${cl.redBright(spellId)} is already defined`);
         return;
       }
 

@@ -1,11 +1,10 @@
-import { applyConfig, baseRun, outFileWithExt, validHook, validOutDir, validOutFilePath } from "./util";
-import { ERROR_COLOR, errorCount, LOG_COLOR, TRACE_COLOR, WARN_COLOR } from "../log";
-import { profiler, VERSION, config, availableMods, loadModList, run } from "..";
+import { applyConfig, cliError, outFileWithExt, PERMANENT_GAME_PATH, setGameDir, validHook, validJSON, validLocale, validOutDir, validOutFilePath } from "./util";
+import { VERSION, config, availableMods, loadModList, validateConfig } from "..";
+import { ERROR_COLOR, LOG_COLOR, TRACE_COLOR, WARN_COLOR } from "../log";
+import { runCommand } from "./commands/run";
 import { writeFileSync } from "node:fs";
-import { exporter } from "./exporter";
 import { program } from "commander";
 import cl from "chalk";
-import { runCommand } from "./commands/run";
 
 program
   .name("noita-emu")
@@ -29,12 +28,13 @@ program
     validOutDir
   )
   .option("--save-vfs-log <path>", "Export the log of all file changes; does not include contents (txt/log/json)", outFileWithExt("txt", "log", "json"))
-  .option("--save-reflection <path>", "Export reflection data like spells, perks, status effects (yaml/json)", outFileWithExt("yml", "yaml", "json"))
-  .option("--save-misc <path>", "Export mod settings, run flags, lua appends, etc (yaml/json)", outFileWithExt("yml", "yaml", "json"))
+  .option("--save-reflection <path>", "Export reflection data like spells, perks, status effects (yaml/json)", outFileWithExt("yaml", "json"))
+  .option("--save-misc <path>", "Export mod settings, run flags, lua appends, etc (yaml/json)", outFileWithExt("yaml", "json"))
   .option("--save-biome-map <path>", "Export the generated biome map (png)", outFileWithExt("png"))
-  .option("--save-locale <path>", "Export the locale file (csv/json)", outFileWithExt("csv", "json"))
-  .option("--save-lua-globals <path>", "Export all lua globals (json)\n", outFileWithExt("json"))
+  .option("--save-locale <path>", "Export the locale file (csv/yaml/json)", outFileWithExt("csv", "json", "yaml"))
+  .option("--save-lua-globals <path>", "Export all lua globals (json/yaml)\n", outFileWithExt("json", "yaml"))
 
+  .option("--locale <locale>", "Change the locale ('en' by default)", validLocale)
   .option("--translate-reflection", "Resolve translation keys in the exported reflection data (--save-reflection)\n")
 
   .option("-p, --prof",
@@ -44,8 +44,9 @@ program
   .option("--prof-counts", "Export total call counts instead of durations")
   .option("--prof-file <path>", "Specify where to export the flamegraph to\n", validOutFilePath)
 
+  .option("--settings <json>", `Apply custom mod settings using a JSON (${cl.gray(`{"key":value}`)})`, validJSON)
   .option("--stop-after <hook>", "Stop execution after this hook", validHook)
-  .option("--unsafe-api", "Enable unsafe API (io, os, ...)\n")
+  .option("--unsafe-api", `Enable ${cl.redBright("unsafe API")} for all mods (io, os, ...)\n`)
 
   .option("--no-rng", "Disable PRNG emulation")
   .option("--no-image", "Disable image editing")
@@ -58,6 +59,7 @@ program
     parseInt, 0
   )
   .option("-s, --seed <number>", "World seed used for PRNG", parseInt, 0)
+  .option("-e, --fatal-errors", "By default, execution will continue even after an error occurs.\nThis option makes the emulator exit as soon as there's an error.")
   .helpOption("-h, --help", "Show this message")
 ;
 
@@ -75,10 +77,25 @@ program.command("run")
 //     try {
 //       baseRun(opts, args, false);
 //     } catch (err) {
-//       program.error(err?.message || err);
+//       cliError(err?.message || err);
 //     }
 //   })
 // ;
+
+program.command("set-game-dir")
+  .argument("<dir>", "Directory")
+  .description("Set a new game directory permanently so that you don't have to pass it into --game-dir every time")
+  .action((dir) => {
+    setGameDir(dir);
+    const err = validateConfig();
+    if (err) {
+      cliError(err);
+    }
+
+    writeFileSync(PERMANENT_GAME_PATH, config.gamePath!);
+    console.log(cl.bold(`Game path updated to ${cl.green(config.gamePath)}`));
+  })
+;
 
 program.command("mods")
   .description("Print the list of available mods")

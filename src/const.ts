@@ -2,7 +2,7 @@ import { arrayToLua, resolvePath } from "./lib/util";
 import { join as pjoin } from "node:path";
 import { LuaLibName } from "lua-state";
 
-export const VERSION = "0.1.0";
+export const VERSION = "0.0.1";
 
 // This string will be reported as an enabled mod or a setting
 export const EMULATOR = "NOITA_EMULATOR";
@@ -26,7 +26,8 @@ export const LUA_HOOKS = [
   "OnWorldPreUpdate",
   "OnWorldPostUpdate",
   "OnWorldInitialized",
-  "OnPlayerSpawned",
+  // Removed for now, as it expects the player's entity id, and needs proper entity & component APIs
+  // "OnPlayerSpawned",
 ] as const;
 export type LuaHook = typeof LUA_HOOKS[number];
 
@@ -71,6 +72,7 @@ export const DEFAULT_STATS = {
 
 // Idfk what are these supposed to be
 // Some mods were broken cause they kept accessing invalid globals...
+// TODO: apparently these are values from World State Component
 export const DEFAULT_GLOBALS = {
   "NEW_GAME_PLUS_ITERATION": "0",
 } as const;
@@ -78,6 +80,10 @@ export const DEFAULT_GLOBALS = {
 // Writing to this file will reset the loaded locale (if its loaded)
 // so the next GameTextGet/GameTextGetTranslatedOrNot is up to date
 export const LOCALE_PATH = resolvePath("data/translations/common.csv");
+
+// These are in order
+export const LOCALE_KEYS = ["en", "ru", "pt-br", "es-es", "de", "fr-fr", "it", "pl", "zh-cn", "jp", "ko"] as const;
+export type LocaleKey = typeof LOCALE_KEYS[number];
 
 // Used by the CLI when exporting the VFS to reject invalid files
 export const RE_INVALID_FILE_CHARS = /[\x00-\x1F<>:"\/\\|?*]/;

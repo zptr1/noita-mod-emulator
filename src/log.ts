@@ -35,10 +35,18 @@ export function printError(thing: string, ...text: any[]) {
   if (config.logLevel > LogLevel.Error) return;
   console.error(ERROR_COLOR(`[${thing}]`), cl.redBright(...text));
   errorCount++;
+
+  if (config.fatalErrors) {
+    throw new Error(`[${thing}] ${text.join(" ")}`);
+  }
 }
 
 export function printErrorPlain(...text: any[]) {
   if (config.logLevel > LogLevel.Error) return;
   console.error(ERROR_COLOR(...text));
   errorCount++;
+
+  if (config.fatalErrors) {
+    throw new Error(text.join(" "));
+  }
 }

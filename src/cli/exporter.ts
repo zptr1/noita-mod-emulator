@@ -1,11 +1,26 @@
+import { printError, printErrorPlain, printWarn } from "../log";
+import { activeMods, gameCtx, Reflect, VERSION } from "..";
 import { mkdirSync, writeFileSync } from "node:fs";
-import { activeMods, gameCtx, Reflect } from "..";
 import { encodeImageToPNG } from "../lib/img";
 import { getAllAPIs } from "./util";
-import { dirname, join as pjoin, resolve } from "node:path";
-import { printErrorPlain, printWarn } from "../log";
+import { dirname } from "node:path";
+import * as YAML from "js-yaml";
 import cl from "chalk";
-import { translateReflection } from "../reflect/misc";
+
+function exportJSON(path: string, obj: any) {
+  if (path.endsWith(".json")) {
+    writeFileSync(path, JSON.stringify(obj, null, 2));
+  } else if (path.endsWith(".yaml")) {
+    writeFileSync(
+      path,
+      `# Generated with Noita Mod Emulator ${VERSION}\n`
+      + `# Mods: ${activeMods.map((x) => x.id).join(", ")}\n\n`
+      + YAML.dump(obj)
+    );
+  } else {
+    printError(`Unsupported format: ${path}`);
+  }
+}
 
 function formatLuaObject(obj: any, omit?: Set<string>, visited = new Set<any>(), out: any = {}) {
   if (visited.has(obj)) return "<circular object>";
@@ -74,7 +89,7 @@ export const exporter = {
       }
     }
 
-    console.log(cl.bold(`Exported ${files.length} files to ${outDir}`));
+    console.log(cl.bold(`Exported ${files.length} files to ${cl.green(outDir)}`));
   },
   saveVfsLog(path: string) {
     const log = Reflect.fileChangeLog;
@@ -95,10 +110,10 @@ export const exporter = {
       writeFileSync(path, fmt);
     }
 
-    console.log(cl.bold(`Saved file change log to ${path} (${log.length} entries)`));
+    console.log(cl.bold(`Saved file change log to ${cl.green(path)} (${log.length} entries)`));
   },
   saveReflection(path: string, translate: boolean) {
-    const f = <T>(x: T, type: string) => translate ? translateReflection(x as any, type) : x;
+    const f = <T>(x: T, type: string) => translate ? Reflect.translateReflection(x as any, type) : x;
 
     const data = {
       spells: f(Reflect.getSpells(), "Spell"),
@@ -106,9 +121,8 @@ export const exporter = {
       statusEffects: f(Reflect.getStatusEffects(), "Status effect"),
     };
 
-    writeFileSync(path, JSON.stringify(data, null, 2));
-
-    console.log(cl.bold(`Saved reflection data to ${path}`));
+    exportJSON(path, data);
+    console.log(cl.bold(`Saved reflection data to ${cl.green(path)}`));
   },
   saveMisc(path: string) {
     
@@ -125,10 +139,21 @@ export const exporter = {
     const img = await encodeImageToPNG(map);
     writeFileSync(path, img);
 
-    console.log(cl.bold(`Saved a ${map.width}x${map.height} biome map to ${path}`));
+    console.log(cl.bold(`Saved a ${map.width}x${map.height} biome map to ${cl.green(path)}`));
   },
   saveLocale(path: string) {
+    const { raw, locale } = Reflect.loadLocale();
     
+    if (path.endsWith(".csv")) {
+      const csv = raw
+        .filter((x, i) => !!x[0] || i == 0)
+        .map((x) => x.join(","))
+        .join("\n");
+
+      writeFileSync(path, csv);
+    } else {
+      exportJSON(path, locale);
+    }
   },
   saveLuaGlobals(path: string) {
     const omit = getAllAPIs();
@@ -141,9 +166,12 @@ export const exporter = {
 
     for (const mod of activeMods) {
       const glob = mod.ctx.lua.eval("return _G");
+
+
       out[mod.id] = formatLuaObject(glob, omit);
     }
 
-    writeFileSync(path, JSON.stringify(out, null, 2));
+    exportJSON(path, out);
+    console.log(cl.bold(`Saved all Lua globals to ${cl.green(path)}`));
   },
 };
