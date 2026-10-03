@@ -66,7 +66,7 @@ You can disable several individual modules, which replaces them with blank funct
 - `--no-locale` disables locale file parsing
 - `--no-biome-map` disables biome map generation
 
-If using as a library, call `setConfig({…})` to update the config; this will apply the passed object on top of the defaults.
+If using as a library, call `setConfig({ … })` to update the config; this will apply the passed object on top of the defaults.
 
 ### Game Data
 
@@ -74,8 +74,8 @@ The emulator tries to automatically detect the game's path using a few common pa
 
 You can use the `set-game-dir` command to permanently change the default path:
 ```sh
-$ noita-emu set-game-dir ~/.local/share/Steam/steamapps/common/Noita # linux
-$ noita-emu set-game-dir "C:/Program Files (x86)/Steam/steamapps/common/Noita" # windows
+$ noita-emu set-game-dir "~/.local/share/Steam/steamapps/common/Noita"  # linux
+$ noita-emu set-game-dir "C:/Program Files (x86)/Steam/steamapps/common/Noita"  # windows
 ```
 
 The folder **must contain** the Noita's `data` folder, along with `data/data.wak`.
@@ -123,10 +123,10 @@ You can use the `--stop-after <hook>` flag to stop execution after the specified
 - `loadModFromDir(path)` loads the mod from a directory
 - `preHook(hook, callback)` runs the function before the hook
 - `postHook(hook, callback)` runs the function after the hook
-- `runSettings()` runs mod settings; can only be called once
-- `run()` runs all mods (also does `runSettings` if settings haven't been executed yet)
-- `runHook(hook, ...args)` runs a hook
+- `run()` starts execution
 - `stop()` stops execution (combine with preHook/postHook)
+- `runSettings()` runs mod settings; can only be called once. Automatically called by `run()` if it hasn't been called before
+- `runHook(hook, ...args)` can be used to run a hook manually
 
 ### Profiler
 
@@ -168,6 +168,7 @@ All reflection runs after the end of the execution. Provided file paths must hav
   * The timestamp is milliseconds since the start of the emulator
 - `--save-reflection <path>` exports all reflection data like spells, perks, status effects, etc (`.json`/`.yaml`)
 - `--save-biome-map <path>` exports the generated biome map to a `.png` file
+- `--save-misc <path>` exports some misc data like mod settings, magic numbers, persistent flags, etc (`.yaml`/`.json`)
 - `--save-locale <path>` exports the final locale file (`.csv`/`.yaml`/`.json`)
 - `--save-lua-globals <path>` exports all Lua globals from all contextes to `.json` or `.yaml`
   * The root contains a separate key per every context (`$vanilla` for the vanilla game, and a mod's ID per every mod)

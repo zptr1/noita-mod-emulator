@@ -1,11 +1,12 @@
 import { printError, printErrorPlain, printWarn } from "../log";
-import { activeMods, gameCtx, Reflect, VERSION } from "..";
+import { activeMods, GAME_FLAGS, gameCtx, GLOBALS, LUA_APPENDS, MAGIC_NUMBERS, PERSISTENT_FLAGS, Reflect, SESSION_NUMBERS, SETTINGS, VERSION } from "..";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { encodeImageToPNG } from "../lib/img";
 import { getAllAPIs } from "./util";
 import { dirname } from "node:path";
 import * as YAML from "js-yaml";
 import cl from "chalk";
+import { mapToObject } from "../lib/util";
 
 function exportJSON(path: string, obj: any) {
   if (path.endsWith(".json")) {
@@ -125,7 +126,24 @@ export const exporter = {
     console.log(cl.bold(`Saved reflection data to ${cl.green(path)}`));
   },
   saveMisc(path: string) {
-    
+    const misc = {
+      settings: mapToObject(
+        SETTINGS, 
+        (x) => x[1] != undefined ? ({
+          value: x[0],
+          next: x[1]
+        }) : x[0]
+      ),
+      persistentFlags: [...PERSISTENT_FLAGS.values()],
+      gameFlags: [...GAME_FLAGS.values()],
+      globals: mapToObject(GLOBALS),
+      magicNumbers: mapToObject(MAGIC_NUMBERS),
+      sessionNumbers: mapToObject(SESSION_NUMBERS),
+      appends: mapToObject(LUA_APPENDS, (v) => [...v.values()])
+    };
+
+    exportJSON(path, misc);
+    console.log(cl.bold(`Saved misc data to ${cl.green(path)}`));
   },
   async saveBiomeMap(path: string) {
     if (!Reflect.biomeMapFile) Reflect.loadBiomeMap();

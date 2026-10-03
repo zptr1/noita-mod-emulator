@@ -1,8 +1,8 @@
 import { EMULATOR_PATH, EXPECTED_LUA_VERSION, EXPECTED_LUAJIT_VERSION, RE_INVALID_FILE_CHARS, RE_RESERVED_NAME_WINDOWS } from "../const";
-import { existsSync, readFileSync, statSync } from "node:fs";
 import { basename, join as pjoin, relative } from "node:path";
-import { LuaState } from "lua-state";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import { printErrorPlain, printWarn } from "../log";
+import { LuaState } from "lua-state";
 import cl from "chalk";
 
 // Moved from vfs/files.ts to fix circular imports
@@ -162,4 +162,20 @@ export function removeNullishValues<T>(obj: T, out: any = {}): T {
   }
 
   return out;
+}
+
+export function mapToObject<V, T = V>(
+  map: Map<string, V>,
+  transform?: (v: V) => T
+): Record<string, T> {
+  if (!transform) {
+    return Object.fromEntries([...map.entries()]) as any;
+  }
+
+  const obj: Record<string, T> = {};
+  for (const [key, value] of map) {
+    obj[key] = transform(value);
+  }
+
+  return obj;
 }

@@ -43,7 +43,7 @@ export function GameGetFrameNum() {
 }
 
 export function GameGetRealWorldTimeSinceStarted() {
-  return performance.now() / 1000;
+  return Date.now() / 1000;
 }
 
 export function SetWorldSeed(seed: number) {
