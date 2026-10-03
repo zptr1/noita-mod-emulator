@@ -144,9 +144,10 @@ Labels:
 - `"path/to/file"*` (with an asterisk at the end) is used for `dofile()`
 - `FunctionName()` is used for all Noita Lua APIs (e.g. `ModImageSetPixel()`)
 
-> You can add custom labels from inside of your mod! See [Lua API Additions](#lua-api-additions)
+P.S. you can add custom labels from inside of your mod! (see [Lua API Additions](#lua-api-additions))
 
-**The duration mode is not accurate!** Only use this as a baseline or for debugging.
+> [!WARNING]
+> **The duration mode is not accurate!** Only use this as a baseline or for debugging.
 - half of all Noita APIs in this emulator are just blank functions; calling them is instant (unlike in-game)
 - the latency from FFI (`Lua <-> C++ <-> JavaScript`) can add up quickly for repeated API calls. Using `bun` or `Deno` instead of `node` can improve this slightly, but not too much.
   * I plan to eventually switch to a custom WASM library, so this will probably be less of an issue in the future.
