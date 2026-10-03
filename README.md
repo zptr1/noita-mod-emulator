@@ -144,16 +144,19 @@ Labels:
 - `"path/to/file"*` (with an asterisk at the end) is used for `dofile()`
 - `FunctionName()` is used for all Noita Lua APIs (e.g. `ModImageSetPixel()`)
 
-P.S. you can add custom labels from inside of your mod! (see [Lua API Additions](#lua-api-additions))
+You can also add custom labels from inside of your mod! (see [Lua API Additions](#lua-api-additions))
 
 > [!WARNING]
 > **The duration mode is not accurate!** Only use this as a baseline or for debugging.
+
+Here's the reasons why it sucks:
 - half of all Noita APIs in this emulator are just blank functions; calling them is instant (unlike in-game)
-- the latency from FFI (`Lua <-> C++ <-> JavaScript`) can add up quickly for repeated API calls. Using `bun` or `Deno` instead of `node` can improve this slightly, but not too much.
+- the latency from FFI (`Lua <-> C++ <-> JavaScript`) can add up easily for repeated API calls. Using `bun` or `Deno` instead of `node` can improve this slightly, but not too much.
   * I plan to eventually switch to a custom WASM library, so this will probably be less of an issue in the future.
 - this is not a sample-based profiler
 - this only rpeorts API calls and `dofile`/`dofile_once`, its not a full Lua profiler and probably won't be.
-- even if this profiler was accurate and this tool was made in a faster language than JS, the performance will still differ from Noita, because the game has to run the entire pixel simulation engine on top of everything else, and probably a bunch of other mods.
+
+Even if this profiler was more accurate and this tool was made in a faster language than JS, the performance will still differ from Noita, because the game has to run the entire pixel simulation engine on top of everything else, and probably a bunch of other mods. But it can still be useful as a baseline, and for debugging.
 
 **Library APIs:**
 - `Profiler.start(mode)` starts the profiler (mode is either `"duration"` or `"counts"`)
