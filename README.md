@@ -51,6 +51,8 @@ This will make `noita-emu` usable anywhere as a CLI.
 
 Use `noita-emu` to run the CLI. The following reference is pimarily for the CLI, but you can use this as a JavaScript library too.
 
+Please note that everything is subject to change since this tool is a **work-in-progress**, although I will try not to make too many breaking changes, output formats and options might still change in the future.
+
 ### Config
 
 - `--game-dir <dir>` (`-g`): game directory (see the next section)
@@ -130,8 +132,6 @@ You can use the `--stop-after <hook>` flag to stop execution after the specified
 
 ### Profiler
 
-**Work in progress**. Output formats and options might change in future versions.
-
 You can enable the profiler with `--prof` (`-p`). There are two modes: **duration mode** (default) and **call count mode** (`--prof-counts`). You can change the output file with `--prof-file <path>`.
 
 This generates a flamegraph containing every `dofile`/`dofile_once` and all Noita API calls, including stack traces. The flamegraph can be viewed on https://speedscope.app.
@@ -153,8 +153,6 @@ The duration mode exports numbers in milliseconds. If there are multiple identic
 - `Profiler.graph` is the raw graph
 
 ### Reflection
-
-**Work in progress**. Output formats and options might change in future versions.
 
 All reflection runs after the end of the execution. Provided file paths must have a valid supported extension.
 
