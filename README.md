@@ -220,7 +220,7 @@ This emulator currently does not impose any memory/CPU usage limits or timeouts 
 
 Only these libraries are exposed by default: `base`, `string`, `table`, `math`, `utf8`, `bit`, and the custom recreation of Noita's API. If you run mods with the `--unsafe-api` flag, this adds `debug`, `io`, `os` and `package`.
 
-I plan to switch to a custom WASM library for running LuaJIT in the future, so that will probably improve some things.
+I plan to switch to a custom WASM library for running Lua in the future, so that will probably improve some things.
 
 Please do report any vulnerabilities you discover, though, I will try my best to fix them!
 
