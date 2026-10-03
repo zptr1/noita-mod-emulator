@@ -42,8 +42,9 @@ $ npm i -g noita-emu
 **Noita Mod Emulator** is currently not on npm, so you have to install it manually by cloning the repo:
 ```sh
 $ git clone https://github.com/zptr1/noita-mod-emulator
-$ cd noita-mod-emualtor
-$ npm install && npm run build && npm link
+$ cd noita-mod-emulator
+$ npm install && npm run build
+$ npm link
 ```
 This will make `noita-emu` usable anywhere as a CLI.
 
