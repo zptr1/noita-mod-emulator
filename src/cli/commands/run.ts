@@ -1,7 +1,7 @@
 import { baseRun, cliError, finish } from "../util";
 import { writeFileSync } from "node:fs";
 import { exporter } from "../exporter";
-import { profiler, run } from "../..";
+import { Profiler, run } from "../..";
 import cl from "chalk";
 
 export async function runCommand(opts: any, args: any[]) {
@@ -24,10 +24,10 @@ export async function runCommand(opts: any, args: any[]) {
   }
 
   if (opts.prof) {
-    profiler.stop(true);
+    Profiler.stop(true);
 
     const outFile = opts.profFile || `noita-emu-prof-${Date.now()}.txt`;
-    const graph = profiler.getFlameGraph();
+    const graph = Profiler.getFlameGraph();
 
     writeFileSync(outFile, graph);
 

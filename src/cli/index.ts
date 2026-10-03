@@ -1,5 +1,5 @@
 import { applyConfig, cliError, outFileWithExt, PERMANENT_GAME_PATH, setGameDir, validHook, validJSON, validLocale, validOutDir, validOutFilePath } from "./util";
-import { VERSION, config, availableMods, detectMods, validateConfig } from "..";
+import { constants, config, availableMods, detectMods, validateConfig } from "..";
 import { ERROR_COLOR, LOG_COLOR, TRACE_COLOR, WARN_COLOR } from "../log";
 import { runCommand } from "./commands/run";
 import { writeFileSync } from "node:fs";
@@ -9,7 +9,7 @@ import cl from "chalk";
 program
   .name("noita-emu")
   .description(
-    `${cl.magenta.bold("Noita Mod Emulator")} ${cl.magenta(VERSION)}\n`
+    `${cl.magenta.bold("Noita Mod Emulator")} ${cl.magenta(constants.VERSION)}\n`
     + cl.bold("Run and debug Noita mods programmatically outside of the game")
   )
 

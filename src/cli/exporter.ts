@@ -1,5 +1,5 @@
+import { constants, activeMods, storage, gameCtx, Reflect } from "..";
 import { printError, printErrorPlain, printWarn } from "../log";
-import { activeMods, GAME_FLAGS, gameCtx, GLOBALS, LUA_APPENDS, MAGIC_NUMBERS, PERSISTENT_FLAGS, Reflect, SESSION_NUMBERS, SETTINGS, VERSION } from "..";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { encodeImageToPNG } from "../lib/img";
 import { getAllAPIs } from "./util";
@@ -14,7 +14,7 @@ function exportJSON(path: string, obj: any) {
   } else if (path.endsWith(".yaml")) {
     writeFileSync(
       path,
-      `# Generated with Noita Mod Emulator ${VERSION}\n`
+      `# Generated with Noita Mod Emulator ${constants.VERSION}\n`
       + `# Mods: ${activeMods.map((x) => x.id).join(", ")}\n\n`
       + YAML.dump(obj)
     );
@@ -128,18 +128,18 @@ export const exporter = {
   saveMisc(path: string) {
     const misc = {
       settings: mapToObject(
-        SETTINGS, 
+        storage.SETTINGS, 
         (x) => x[1] != undefined ? ({
           value: x[0],
           next: x[1]
         }) : x[0]
       ),
-      persistentFlags: [...PERSISTENT_FLAGS.values()],
-      gameFlags: [...GAME_FLAGS.values()],
-      globals: mapToObject(GLOBALS),
-      magicNumbers: mapToObject(MAGIC_NUMBERS),
-      sessionNumbers: mapToObject(SESSION_NUMBERS),
-      appends: mapToObject(LUA_APPENDS, (v) => [...v.values()])
+      persistentFlags: [...storage.PERSISTENT_FLAGS.values()],
+      gameFlags: [...storage.GAME_FLAGS.values()],
+      globals: mapToObject(storage.GLOBALS),
+      magicNumbers: mapToObject(storage.MAGIC_NUMBERS),
+      sessionNumbers: mapToObject(storage.SESSION_NUMBERS),
+      appends: mapToObject(storage.LUA_APPENDS, (v) => [...v.values()])
     };
 
     exportJSON(path, misc);

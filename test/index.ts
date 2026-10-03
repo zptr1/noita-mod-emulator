@@ -1,6 +1,6 @@
-import { profiler, load, Reflect, run, detectMods } from "../src";
+import { Profiler, load, Reflect, run, detectMods } from "../src";
 
-profiler.start();
+Profiler.start();
 
 detectMods();
 load(["noita.fairmod"]);
@@ -10,4 +10,4 @@ Reflect.getSpells();
 Reflect.getPerks();
 Reflect.getStatusEffects();
 
-profiler.stop();
+Profiler.stop();

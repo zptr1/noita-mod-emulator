@@ -94,18 +94,22 @@ export function detectMods(force = false) {
   return availableMods;
 }
 
-export function load(mods: string[]) {
-  if (!gameCtx) {
-    gameCtx = new Context("vanilla");
-    const path = pjoin(config.gamePath || "", "data");
-    
-    if (!config.gamePath || !isDir(path)) {
-      throw new Error(`Could not find Noita's folder. Set it in config.gamePath`);
-    }
+export function loadGame() {
+  if (gameCtx) return;
 
-    detectMods();
-    loadGameData(path);
+  gameCtx = new Context("vanilla");
+  const path = pjoin(config.gamePath || "", "data");
+  
+  if (!config.gamePath || !isDir(path)) {
+    throw new Error(`Could not find Noita's folder. Set it in config.gamePath`);
   }
+
+  detectMods();
+  loadGameData(path);
+}
+
+export function load(mods: string[]) {
+  if (!gameCtx) loadGame();
 
   for (const path of mods) {
     const mod = availableMods.get(path);

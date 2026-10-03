@@ -1,13 +1,13 @@
-import { load, detectMods, postHook, stop } from "../vm";
 import fs, { accessSync, existsSync, readdirSync, readFileSync } from "node:fs";
+import { EMULATOR_PATH, LOCALE_KEYS, LUA_HOOKS } from "../const";
 import { config, setConfig, validateConfig } from "../config";
 import { dirname, join as pjoin, resolve } from "node:path";
+import { load, detectMods, postHook, stop } from "../vm";
 import { checkLuaVersion, isDir } from "../lib/util";
 import { PLACEHOLDER_FUNCS } from "../context/lua";
 import { errorCount, warningCount } from "../log";
-import { EMULATOR_PATH, LOCALE_KEYS, LUA_HOOKS } from "../const";
+import { Profiler, API, storage } from "..";
 import { program } from "commander";
-import { profiler, API, SETTINGS } from "..";
 import cl from "chalk";
 
 // Might add a way to save/load config later? to avoid having to pass these arguments all the time
@@ -112,7 +112,7 @@ export function applyConfig(opts: any) {
         cliError(`Invalid setting ${key}: cannot pass an object`);
       }
 
-      SETTINGS.set(key, [value, null]);
+      storage.SETTINGS.set(key, [value, null]);
     }
   }
 
@@ -137,7 +137,7 @@ export function baseRun(opts: any, mods: string[], defaultCurrentDir: boolean) {
   detectMods(true);
 
   if (opts.prof) {
-    profiler.start(opts.profCounts ? "counts" : "duration");
+    Profiler.start(opts.profCounts ? "counts" : "duration");
   }
 
   if (!mods.length && defaultCurrentDir) {
