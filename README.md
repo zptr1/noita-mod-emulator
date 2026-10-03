@@ -136,7 +136,15 @@ You can enable the profiler with `--prof` (`-p`). There are two modes: **duratio
 
 This generates a flamegraph containing every `dofile`/`dofile_once` and all Noita API calls, including stack traces. The flamegraph can be viewed on https://speedscope.app.
 
-The duration mode exports numbers in milliseconds. If there are multiple identical calls in the same place, the duration gets aggregated into a single entry.
+The duration mode exports numbers in milliseconds. If there are multiple identical calls in the same place, the duration gets aggregated into a single entry. Numbers in the the call count mode simply mean how many times has this label been called.
+
+Labels:
+- `hook:Name()` is used for hooks during execution (e.g. `hook:OnModPreInit()`)
+- `"path/to/file"` is used for `dofile_once()`
+- `"path/to/file"*` (with an asterisk at the end) is used for `dofile()`
+- `FunctionName()` is used for all Noita Lua APIs (e.g. `ModImageSetPixel()`)
+
+> You can add custom labels from inside of your mod! See [Lua API Additions](#lua-api-additions)
 
 **The duration mode is not accurate!** Only use this as a baseline or for debugging.
 - half of all Noita APIs in this emulator are just blank functions; calling them is instant (unlike in-game)
