@@ -22,6 +22,7 @@ You can use this to
   - [Running Mods](#running-mods)
   - [Profiler](#profiler)
   - [Reflection](#reflection)
+  - [REPL](#repl)
 - [Lua API Additions](#lua-api-additions)
   - [Working with the profiler](#working-with-the-profiler)
 - [List of things that needs further testing](#list-of-things-that-needs-further-testing)
@@ -170,7 +171,7 @@ All reflection runs after the end of the execution. Provided file paths must hav
 
 ### REPL
 
-You can also use this as a REPL: `noita-emu repl`. This REPL lets you evaluate Lua in any specific context and execute hooks one by one. Noita APIs are available.
+You can also use this as a REPL: `noita-emu repl`. This REPL lets you evaluate Lua in any mod's context and execute hooks one by one. Noita APIs are available. Use `return ...` to get a value.
 
 Type `.help` for more info.
 
