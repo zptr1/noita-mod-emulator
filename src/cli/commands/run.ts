@@ -1,19 +1,20 @@
-import { baseRun, cliError, finish } from "../util";
+import { baseRun, cliError, finish, wrapError } from "../util";
 import { writeFileSync } from "node:fs";
 import { exporter } from "../exporter";
 import { Profiler, run } from "../..";
 import cl from "chalk";
 
 export async function runCommand(opts: any, args: any[]) {
-  try {
-    baseRun(opts, args, true);
-  } catch (err) {
-    cliError(err?.message || err);
-  }
+  wrapError(
+    () => baseRun(opts, args, true),
+    true
+  );
 
   try {
     run();
   } catch {
+    // This should only error if the fatalErrors setting is set;
+    // in which case the error is already printed.
     process.exit(1);
   }
 

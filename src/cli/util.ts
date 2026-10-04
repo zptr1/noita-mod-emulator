@@ -191,3 +191,17 @@ export function finish() {
 export function cliError(...msg: string[]) {
   program.error(cl.redBright(...msg));
 }
+
+export function wrapError(fn: Function, fatal=false) {
+  try {
+    return fn();
+  } catch (err) {
+    const msg = `${err.message || err}`;
+
+    if (fatal) {
+      cliError(msg);
+    } else {
+      console.error(cl.redBright(msg));
+    }
+  }
+}

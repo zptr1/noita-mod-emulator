@@ -2,6 +2,7 @@ import { printTrace, printError, printDebug } from "../log";
 import { GameTextGetTranslatedOrNot } from "./data/locale";
 import { activeModsById, activeMods } from "../vm/loader";
 import { biomeMap } from "../reflect/biomemap";
+import { arrayToLua } from "../lib/util";
 import { Context } from "../context";
 import { EMULATOR } from "../const";
 import { config } from "../config";
@@ -15,7 +16,7 @@ export function ModIsEnabled(id: string) {
 }
 
 export function ModGetActiveModIDs() {
-  return activeMods.map((x) => x.id);
+  return arrayToLua(activeMods.map((x) => x.id));
 }
 
 export function ctx$print_error(ctx: Context, ...text: string[]) {

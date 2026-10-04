@@ -33,7 +33,7 @@ export function stop() {
 }
 
 export function runHook(hook: LuaHook, ...args: any[]) {
-  initHooks();
+  runSettings();
   runCallbacks(args, hookPreCallbacks.get(hook));
 
   try {
@@ -59,14 +59,14 @@ export function runSettings() {
   if (ranSettings) return;
 
   ranSettings = true;
+  initHooks();
   printLog("VM", `Running mod's settings.lua`);
 
   for (const mod of activeMods) {
     const path = `${mod.path}/settings.lua`;
 
-    if (!running) break;
     if (!fileExists(path)) continue;
-  
+
     const ctx = new Context(`${mod.id}:settings`);
   
     try {

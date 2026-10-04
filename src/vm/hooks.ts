@@ -4,11 +4,11 @@ import { loadBiomeMap } from "../reflect";
 import { config } from "../config";
 import * as API from "../api";
 
-let init = false;
+export let hooksInitialized = false;
 
 export function initHooks() {
-  if (init) return;
-  init = true;
+  if (hooksInitialized) return;
+  hooksInitialized = true;
 
   preHook("OnModPreInit", () => {
     API.Base.ModMagicNumbersFileAdd("data/magic_numbers.xml");

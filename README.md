@@ -168,6 +168,12 @@ All reflection runs after the end of the execution. Provided file paths must hav
 
 `--save-reflection` does not resolve localization by default. You can use `--translate-reflection` to automatically translate all translateable text in the output; and `--locale <code>` to change the language if you want something other than English.
 
+### REPL
+
+You can also use this as a REPL: `noita-emu repl`. This REPL lets you evaluate Lua in any specific context and execute hooks one by one. Noita APIs are available.
+
+Type `.help` for more info.
+
 ## Lua API Additions
 
 You can test if your mod is being emulated via `ModIsEnabled("NOITA_EMULATOR")` or `ModSettingGet("NOITA_EMULATOR")`; both of which should return true. (keep in mind other mods could write to that setting, so prefer `ModIsEnabled`)

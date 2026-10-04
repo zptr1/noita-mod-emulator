@@ -2,6 +2,7 @@ import { applyConfig, cliError, outFileWithExt, PERMANENT_GAME_PATH, setGameDir,
 import { constants, config, availableMods, detectMods, validateConfig } from "..";
 import { ERROR_COLOR, LOG_COLOR, TRACE_COLOR, WARN_COLOR } from "../log";
 import { runCommand } from "./commands/run";
+import { startRepl } from "./commands/repl";
 import { writeFileSync } from "node:fs";
 import { program } from "commander";
 import cl from "chalk";
@@ -68,19 +69,10 @@ program.command("run")
   .description("Pass a list of mod names or directories. Defaults to the current directory.")
   .action((args) => runCommand(program.opts(), args));
 
-// program.command("repl")
-//   .argument("[mods...]", "List of mods")
-//   .description("Open a custom Lua REPL to control execution precisely and inspect game state")
-//   .action((args) => {
-//     const opts = program.opts();
-
-//     try {
-//       baseRun(opts, args, false);
-//     } catch (err) {
-//       cliError(err?.message || err);
-//     }
-//   })
-// ;
+program.command("repl")
+  .argument("[mods...]", "List of mods")
+  .description("Open a custom Lua REPL")
+  .action((args) => startRepl(program.opts(), args));
 
 program.command("set-game-dir")
   .argument("<dir>", "Directory")
