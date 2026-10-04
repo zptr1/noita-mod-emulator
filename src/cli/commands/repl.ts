@@ -1,4 +1,4 @@
-import { activeMods, activeModsById, availableMods, gameCtx, load, runHook, runSettings } from "../../vm";
+import { activeMods, activeModsById, availableMods, gameCtx, load, loadGame, runHook, runSettings } from "../../vm";
 import { baseRun, wrapError } from "../util";
 import repl, { REPLServer } from "node:repl";
 import { LUA_HOOKS } from "../../const";
@@ -7,20 +7,58 @@ import cl from "chalk";
 
 let server: REPLServer | null = null;
 let activeCtx: Context | null = null;
-let replCtx: Context | null = null;
 
 const hooks = [...LUA_HOOKS];
 
 function getPrompt() {
-  const id = activeCtx?.id ?? "repl";
-  const color = id == "repl" || id == "vanilla" ? cl.yellow : cl.green;
+  if (!activeCtx || activeCtx == gameCtx) {
+    return cl.bold(`[${cl.yellow("game")}] > `);
+  }
 
-  return cl.bold(`[${color(id)}] > `);
+  return cl.bold(`[${cl.green(activeCtx.id)}] > `);
 }
 
 function setCtx(ctx: Context) {
   activeCtx = ctx;
   if (server) server.setPrompt(getPrompt());
+}
+
+function formatReplObject(obj: any, depth = 0, circular = new Set<any>()) {
+  if (circular.has(obj)) return cl.cyan("[circular]");
+  if (typeof obj == "string") return cl.green(JSON.stringify(obj));
+  if (typeof obj == "number" || typeof obj == "boolean") return cl.yellow(obj);
+  if (typeof obj == "function") return cl.cyan("[function]");
+  if (typeof obj != "object" || obj == null) return cl.bold("nil");
+  if (depth > 2) return "{ ... }";
+
+  const out = ["{"];
+  const keys = Object.keys(obj);
+  let length = 0;
+  
+  circular.add(obj);
+
+  for (let idx = 0; idx < keys.length; idx++) {
+    const key = keys[idx];
+    const value = obj[key];
+
+    const fmt = (
+      isNaN(Number(key)) ? `${key} = ` : ""
+    ) + formatReplObject(value, depth + 1, circular) + (
+      idx < keys.length - 1 ? "," : ""
+    );
+
+    length += fmt.length;
+    out.push(fmt);
+  }
+
+  if (length > 60) {
+    const tab = " ".repeat((depth + 1) * 2);
+    const lowerTab = " ".repeat(depth * 2);
+
+    return out.join(`\n${tab}`) + `\n${lowerTab}}`;
+  }
+
+  return out.join(" ") + " }";
 }
 
 function initReplCommands() {
@@ -117,18 +155,12 @@ function initReplCommands() {
         return penis();
       }
 
-      if (id == "repl") {
-        setCtx(replCtx!);
-        return penis();
-      }
-
       const mod = activeModsById.get(id);
       if (mod) {
         setCtx(mod.ctx);
       } else {
         console.log("Available contexts:");
         console.log(" -", cl.yellow("vanilla"));
-        console.log(" -", cl.yellow("repl"));
         for (const mod of activeMods) {
           console.log(" -", cl.green(mod.id));
         }
@@ -149,12 +181,17 @@ export function startRepl(opts: any, args: any[]) {
   console.log(`Type ${cl.bold(".help")} for help`);
   console.log("");
 
-  activeCtx = replCtx = new Context("repl");
+  if (!gameCtx) {
+    loadGame();
+  }
+
+  activeCtx = gameCtx;
 
   server = repl.start({
     prompt: getPrompt(),
     ignoreUndefined: true,
     completer: () => [],
+    writer: (obj) => formatReplObject(obj),
     eval(code, _ctx, _file, cb) {
       runLua(code.trim(), cb);
     }
