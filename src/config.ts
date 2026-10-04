@@ -23,6 +23,7 @@ export const config = {
   enablePRNG: true,
   enableLocalization: true,
   enableBiomeMap: true,
+  enableGUI: false,
 
   collectFileLog: false,
   luaUnsafeLibs: false,

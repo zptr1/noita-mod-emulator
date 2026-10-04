@@ -32,3 +32,4 @@ It would be nice to add more warnings that catch common errors.
 
 - scale_y on GuiImage is 0 by default, always need to specify
 - frame-spammed GuiCreate is wrong, it must be created only once and then kept in globals or smth
+- 
