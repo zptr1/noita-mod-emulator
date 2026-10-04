@@ -154,6 +154,7 @@ export function startRepl(opts: any, args: any[]) {
   server = repl.start({
     prompt: getPrompt(),
     ignoreUndefined: true,
+    completer: () => [],
     eval(code, _ctx, _file, cb) {
       runLua(code.trim(), cb);
     }
