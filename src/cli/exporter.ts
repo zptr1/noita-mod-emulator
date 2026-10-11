@@ -8,6 +8,8 @@ import * as YAML from "js-yaml";
 import cl from "chalk";
 import { mapToObject } from "../lib/util";
 
+const RE_INDEX_KEY = /^\d+$/;
+
 function exportJSON(path: string, obj: any) {
   if (path.endsWith(".json")) {
     writeFileSync(path, JSON.stringify(obj, null, 2));
@@ -28,24 +30,30 @@ function formatLuaObject(obj: any, omit?: Set<string>, visited = new Set<any>(),
   visited.add(obj);
 
   const functions: string[] = [];
+  const array: any[] = [];
+  let hasObjectKeys = false;
 
   for (const key in obj) {
     const val = obj[key];
+    const isIndex = RE_INDEX_KEY.test(key);
     
     if (omit && omit.has(key)) continue;
 
     if (typeof val == "function") {
-      functions.push(key);
+      if (isIndex) array.push("[function]");
+      else functions.push(key);
       continue;
     }
-    
-    if (Array.isArray(val)) {
-      // TODO: apparently lua-state doesn't quite return these as arrays, so this never gets triggered
-      out[key] = val.map((x) => formatLuaObject(x, undefined, visited));
-    } else if (typeof val == "object") {
-      out[key] = formatLuaObject(val, undefined, visited);
+
+    const fmt = typeof val == "object"
+      ? formatLuaObject(val, undefined, visited)
+      : val;
+
+    if (isIndex) {
+      array[Number(key) - 1] = fmt;
     } else {
-      out[key] = val;
+      out[key] = fmt;
+      hasObjectKeys = false;
     }
   }
 
@@ -53,6 +61,13 @@ function formatLuaObject(obj: any, omit?: Set<string>, visited = new Set<any>(),
     // This can still be used programmatically (by splitting by comma)
     // and improves readability for JSON.stringify
     out["$funcs"] = functions.join(",");
+    hasObjectKeys = true;
+  }
+
+  if (array.length) {
+    if (!hasObjectKeys) return array;
+    // Not sure if that's possible, but just in case
+    out["$array"] = array;
   }
 
   return out;
@@ -184,12 +199,13 @@ export const exporter = {
 
     for (const mod of activeMods) {
       const glob = mod.ctx.lua.eval("return _G");
-
-
       out[mod.id] = formatLuaObject(glob, omit);
     }
 
     exportJSON(path, out);
     console.log(cl.bold(`Saved all Lua globals to ${cl.green(path)}`));
   },
+  saveWak(path: string) {
+    console.log(path);
+  }
 };
