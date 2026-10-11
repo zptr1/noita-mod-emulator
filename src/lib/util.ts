@@ -179,3 +179,8 @@ export function mapToObject<V, T = V>(
 
   return obj;
 }
+
+export function parseCommaList(str?: string) {
+  if (typeof str != "string") return undefined;
+  return str.split(",").filter((x: string) => !!x);
+}

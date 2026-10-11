@@ -1,4 +1,4 @@
-import { removeFalsyValues } from "../lib/util";
+import { parseCommaList, removeFalsyValues, removeNullishValues } from "../lib/util";
 import { printError, printTrace, printWarn } from "../log";
 import { Context } from "../context";
 import cl from "chalk";
@@ -49,7 +49,6 @@ export interface Spell {
     patternDegrees: number;
     screenshake: number;
     recoil: number;
-    explosionDamageToMaterials: number;
     knockbackForce: number;
     lightningCount: number;
     bounces: number;
@@ -58,6 +57,7 @@ export interface Spell {
     bloodMultiplier: number;
     goreParticles: number;
     lifetimeAdd: number;
+    physicsImpulseCoeff: number;
   }>;
   addedDamage: Partial<{
     melee: number;
@@ -73,6 +73,7 @@ export interface Spell {
     nullAll: number;
     critChance: number;
     critMultiplier: number;
+    explosionDamageToMaterials: number;
   }>;
   flags: Partial<{
     friendlyFire: boolean;
@@ -89,13 +90,12 @@ export interface Spell {
   material?: { material: string; amount: number };
   trail?: { material: string; amount: number };
   ragdollFx?: number;
-  physicsImpulseCoeff?: number;
   sprite?: string;
-  extraEntities?: string[];
-  gameEffectEntities?: string;
   soundLoopTag?: string;
   projectileFile?: string;
-
+  
+  gameEffectEntities?: string[];
+  extraEntities?: string[];
   projectiles: string[];
 }
 
@@ -120,7 +120,7 @@ function parseSpell(args: any[]): Spell {
   if (!args[1]) warn(`has an empty name (this will crash the game!)`);
   if (!args[2]) warn(`has an empty description (this will crash the game!)`);
 
-  const one2undef = (v: number) => v == 1 ? undefined : v;
+  const undefDefault = <T>(v: T, def: T) => v === def ? undefined : v;
   const material = (material?: string, count?: number, key="material") => {
     if (!material && !count) return;
     if (!material) warn(`defines ${key} file but not count`);
@@ -147,29 +147,31 @@ function parseSpell(args: any[]): Spell {
       requiresFlag: args[8],
       manualUnlock: args[9],
     }),
-    stats: removeFalsyValues({
-      maxUses: args[10],
+    stats: removeNullishValues({
       rechargeTime: args[45],
       castDelay: args[21],
       manaDrain: args[12],
-      drawCount: args[14],
-      speedMultiplier: one2undef(args[22]),
-      childSpeedMultiplier: one2undef(args[23]),
-      dampening: one2undef(args[24]),
-      explosionRadius: args[25],
-      spreadDegrees: args[26],
-      patternDegrees: args[27],
-      screenshake: args[28],
-      recoil: args[29],
-      explosionDamageToMaterials: args[43],
-      knockbackForce: args[44],
-      lightningCount: args[46],
-      bounces: args[51],
-      gravity: args[52],
-      light: args[53],
-      bloodMultiplier: one2undef(args[54]),
-      goreParticles: args[55],
-      lifetimeAdd: args[59],
+      maxUses: undefDefault(args[10], -1),
+      drawCount: undefDefault(args[14], 0),
+      speedMultiplier: undefDefault(args[22], 1),
+      childSpeedMultiplier: undefDefault(args[23], 1),
+      bloodMultiplier: undefDefault(args[54], 1),
+      dampening: undefDefault(args[24], 1),
+      ...removeFalsyValues({
+        explosionRadius: args[25],
+        spreadDegrees: args[26],
+        patternDegrees: args[27],
+        screenshake: args[28],
+        recoil: args[29],
+        knockbackForce: args[44],
+        lightningCount: args[46],
+        bounces: args[51],
+        gravity: args[52],
+        light: args[53],
+        goreParticles: args[55],
+        lifetimeAdd: args[59],
+        physicsImpulseCoeff: args[58],
+      }),
     }),
     flags: removeFalsyValues({
       isDangerousBlast: args[13],
@@ -197,21 +199,19 @@ function parseSpell(args: any[]): Spell {
       nullAll: args[40],
       critChance: args[41],
       critMultiplier: args[42],
+      explosionDamageToMaterials: args[43],
     }),
     customXMLFile: args[11],
     material: material(args[47], args[48]),
     trail: material(args[49], args[50], "trail"),
     ragdollFx: args[56],
-    physicsImpulseCoeff: args[58],
     sprite: args[60],
-    extraEntities: args[61]
-      ? args[61].split(",").filter((x: string) => !!x)
-      : undefined,
-    gameEffectEntities: args[62],
     soundLoopTag: args[63],
     projectileFile: args[64],
 
-    projectiles: currentProjs
+    gameEffectEntities: parseCommaList(args[62]),
+    extraEntities: parseCommaList(args[61]),
+    projectiles: currentProjs,
   };
 }
 

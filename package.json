@@ -32,14 +32,12 @@
     "js-yaml": "^5.4.2",
     "lua-state": "^1.2.0",
     "pngjs": "^7.0.0",
-    "sharp": "^0.35.5"
+    "sharp": "^0.35.5",
+    "raylib": "^0.14.0"
   },
   "devDependencies": {
     "@types/pngjs": "^6.0.5",
     "esbuild": "latest",
     "typescript": "^7.0.2"
-  },
-  "optionalDependencies": {
-    "raylib": "^0.14.0"
   }
 }

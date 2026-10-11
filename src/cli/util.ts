@@ -97,6 +97,8 @@ export function applyConfig(opts: any) {
   if (!opts.image) newConfig.enableImageEditing = false;
   if (!opts.locale) newConfig.enableLocalization = false;
   if (!opts.biomeMap) newConfig.enableBiomeMap = false;
+  
+  if (opts.gui) newConfig.enableGUI = true;
 
   if (opts.saveVfsLog) newConfig.collectFileLog = true;
 

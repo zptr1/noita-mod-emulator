@@ -89,7 +89,7 @@ export type LocaleKey = typeof LOCALE_KEYS[number];
 export const RE_INVALID_FILE_CHARS = /[\x00-\x1F<>:"\/\\|?*]/;
 export const RE_RESERVED_NAME_WINDOWS = /^(con|prn|aux|nul|com\d|lpt\d)$/i;
 
-export const GUI_DEFAULT_WIDTH = 800;
-export const GUI_DEFAULT_HEIGHT = 600;
+export const GUI_DEFAULT_WIDTH = 1280;
+export const GUI_DEFAULT_HEIGHT = 720;
 export const GUI_DEFAULT_SCALE = 1.0;
 export const GUI_FPS = 60;

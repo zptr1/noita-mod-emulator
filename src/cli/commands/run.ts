@@ -3,6 +3,7 @@ import { writeFileSync } from "node:fs";
 import { exporter } from "../exporter";
 import { Profiler, run } from "../..";
 import cl from "chalk";
+import { startRenderLoop } from "../../gui";
 
 export async function runCommand(opts: any, args: any[]) {
   wrapError(
@@ -16,6 +17,10 @@ export async function runCommand(opts: any, args: any[]) {
     // This should only error if the fatalErrors setting is set;
     // in which case the error is already printed.
     process.exit(1);
+  }
+
+  if (opts.gui) {
+    startRenderLoop();
   }
 
   console.log();

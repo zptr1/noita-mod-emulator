@@ -54,6 +54,12 @@ program
   .option("--no-locale", "Do not parse language files")
   .option("--no-biome-map", "Do not generate the biome map\n")
 
+  // .option(
+  //   "--gui",
+  //   `Enables GUI APIs and spawns a window with the rendered GUI preview\n`
+  //   + `Will run the ${cl.bold("OnWorldPreUpdate")} and ${cl.bold("OnWorldPostUpdate")} hooks every frame\n`
+  // )
+
   .option(
     "-l, --log-level <level>",
     `0: ${cl.bold("debug")} (includes mod logs), 1: ${TRACE_COLOR("trace")}, 2: ${LOG_COLOR("info")}, 3: ${WARN_COLOR("warn")}, 4: ${ERROR_COLOR("error")}`,

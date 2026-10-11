@@ -1,5 +1,5 @@
 import { activeMods, activeModsById, availableMods, gameCtx, load, loadGame, runHook, runSettings } from "../../vm";
-import { baseRun, wrapError } from "../util";
+import { baseRun, cliError, wrapError } from "../util";
 import repl, { REPLServer } from "node:repl";
 import { LUA_HOOKS } from "../../const";
 import { Context } from "../../context";
@@ -176,6 +176,8 @@ export function startRepl(opts: any, args: any[]) {
     () => baseRun(opts, args, true),
     true
   );
+
+  if (opts.gui) cliError("GUI is not supposed with REPL");
   
   console.log("");
   console.log(`Type ${cl.bold(".help")} for help`);
