@@ -2,7 +2,7 @@ import { constants, activeMods, storage, gameCtx, Reflect } from "..";
 import { printError, printErrorPlain, printWarn } from "../log";
 import { files, loadAllUnreadFiles, strFiles } from "../vfs";
 import { mkdirSync, writeFileSync } from "node:fs";
-import { encodeImageToPNG } from "../lib/img";
+import { encodeImageToPNG, imageFiles } from "../lib/img";
 import { mapToObject } from "../lib/util";
 import { getAllAPIs } from "./util";
 import { dirname } from "node:path";
@@ -214,8 +214,13 @@ export const exporter = {
     exportJSON(path, out);
     console.log(cl.bold(`Saved all Lua globals to ${cl.green(path)}`));
   },
-  saveWak(path: string) {
+  async saveWak(path: string) {
     loadAllUnreadFiles();
+
+    for (const img of imageFiles) {
+      if (!img.path) continue;
+      files.set(img.path, await encodeImageToPNG(img));
+    }
 
     for (const [path, content] of strFiles) {
       files.set(path, Buffer.from(content, "utf8"));
