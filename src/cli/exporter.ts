@@ -1,12 +1,14 @@
 import { constants, activeMods, storage, gameCtx, Reflect } from "..";
 import { printError, printErrorPlain, printWarn } from "../log";
+import { files, loadAllUnreadFiles, strFiles } from "../vfs";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { encodeImageToPNG } from "../lib/img";
+import { mapToObject } from "../lib/util";
 import { getAllAPIs } from "./util";
 import { dirname } from "node:path";
 import * as YAML from "js-yaml";
 import cl from "chalk";
-import { mapToObject } from "../lib/util";
+import { generateDataWak } from "../lib/nolla_data";
 
 const RE_INDEX_KEY = /^\d+$/;
 
@@ -73,39 +75,46 @@ function formatLuaObject(obj: any, omit?: Set<string>, visited = new Set<any>(),
   return out;
 }
 
-export const exporter = {
-  async saveVfs(outDir: string) {
-    mkdirSync(outDir, { recursive: true });
+async function saveVfs(outDir: string, full=false) {
+  mkdirSync(outDir, { recursive: true });
 
-    const files = Reflect.exportVfs(outDir);
+  const files = Reflect.exportVfs(outDir, full);
+  
+  const createdDirs = new Set<string>();
+  const savedFiles = new Set<string>();
+
+  for (const file of files) {
+    if (savedFiles.has(file.path)) {
+      printWarn("VFS", `Duplicated file path: ${file.path} (from ${file.blame || "?"})`);
+      continue;
+    }
     
-    const createdDirs = new Set<string>();
-    const savedFiles = new Set<string>();
-
-    for (const file of files) {
-      if (savedFiles.has(file.path)) {
-        printWarn("VFS", `Duplicated file path: ${file.path} (from ${file.blame || "?"})`);
-        continue;
-      }
-      
-      const dir = dirname(file.path);
-      if (!createdDirs.has(dir)) {
-        mkdirSync(dir, { recursive: true });
-        createdDirs.add(dir);
-      }
-
-      savedFiles.add(file.path);
-
-      // wx guarantees this will never override an existing file
-      if (file.content) {
-        writeFileSync(file.path, file.content, { flag: "wx" });
-      } else if (file.image) {
-        const buffer = await encodeImageToPNG(file.image);
-        writeFileSync(file.path, buffer, { flag: "wx" });
-      }
+    const dir = dirname(file.path);
+    if (!createdDirs.has(dir)) {
+      mkdirSync(dir, { recursive: true });
+      createdDirs.add(dir);
     }
 
-    console.log(cl.bold(`Exported ${files.length} files to ${cl.green(outDir)}`));
+    savedFiles.add(file.path);
+
+    // wx guarantees this will never override an existing file
+    if (file.content) {
+      writeFileSync(file.path, file.content, { flag: "wx" });
+    } else if (file.image) {
+      const buffer = await encodeImageToPNG(file.image);
+      writeFileSync(file.path, buffer, { flag: "wx" });
+    }
+  }
+
+  console.log(cl.bold(`Exported ${files.length} files to ${cl.green(outDir)}`));
+}
+
+export const exporter = {
+  async saveVfs(outDir: string) {
+    await saveVfs(outDir, false);
+  },
+  async saveVfsFull(outDir: string) {
+    await saveVfs(outDir, true);
   },
   saveVfsLog(path: string) {
     const log = Reflect.fileChangeLog;
@@ -206,6 +215,17 @@ export const exporter = {
     console.log(cl.bold(`Saved all Lua globals to ${cl.green(path)}`));
   },
   saveWak(path: string) {
-    console.log(path);
+    loadAllUnreadFiles();
+
+    for (const [path, content] of strFiles) {
+      files.set(path, Buffer.from(content, "utf8"));
+    }
+
+    strFiles.clear();
+
+    const wak = generateDataWak(files);
+    writeFileSync(path, wak);
+
+    console.log(cl.bold(`Generated .wak with ${cl.green(files.size)} files to ${cl.green(path)}`));
   }
 };

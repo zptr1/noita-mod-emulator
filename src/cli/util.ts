@@ -100,6 +100,7 @@ export function applyConfig(opts: any) {
   
   if (opts.gui) newConfig.enableGUI = true;
 
+  if (opts.wakOnly) newConfig.dataWakOnly = true;
   if (opts.saveVfsLog) newConfig.collectFileLog = true;
 
   if (opts.settings) {

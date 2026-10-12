@@ -1,9 +1,9 @@
+import { fileBlame, files, loadAllUnreadFiles, strFiles } from "../vfs";
+import { callStack, profilerEnabled } from "../context/profiler";
 import { imageBlame, imageFiles, Img } from "../lib/img";
-import { fileBlame, strFiles } from "../vfs";
 import { validatePath } from "../lib/util";
 import { resolve } from "node:path";
 import { printLog } from "../log";
-import { callStack, profilerEnabled } from "../context/profiler";
 
 type FileChangeAction = "write" | "add_append" | "set_appends" | "image";
 interface FileChange {
@@ -18,7 +18,7 @@ interface FileChange {
 interface ExportedFile {
   path: string;
   virtPath: string;
-  content?: string;
+  content?: string | Buffer;
   image?: Img;
   blame?: string;
 }
@@ -39,13 +39,13 @@ export function reportFileChange(action: FileChangeAction, mod: string, path: st
   fileChangeLog.push(log);
 }
 
-export function exportVfs(outDir: string) {
+export function exportVfs(outDir: string, includeUnaccessedFiles=false) {
   const out: ExportedFile[] = [];
   outDir = resolve(outDir);
 
   printLog("VFS", "Exporting the file system...");
 
-  for (const [ virtPath, content ] of strFiles) {
+  for (const [virtPath, content] of strFiles) {
     const path = validatePath(virtPath, outDir);
     if (!path) continue;
 
@@ -55,6 +55,7 @@ export function exportVfs(outDir: string) {
     });
   }
 
+  // TODO: see encodeAllImagesToVFS @ src/lib/img.ts
   for (const img of imageFiles) {
     if (!img.path) continue;
 
@@ -67,6 +68,22 @@ export function exportVfs(outDir: string) {
       image: img,
       blame: imageBlame.get(img.path)
     });
+  }
+
+  if (includeUnaccessedFiles) {
+    loadAllUnreadFiles();
+
+    for (const [virtPath, content] of files) {
+      if (!content.length) continue;
+
+      const path = validatePath(virtPath, outDir);
+      if (!path) continue;
+
+      out.push({
+        path, virtPath, content,
+        blame: fileBlame.get(virtPath)
+      });
+    }
   }
 
   return out;

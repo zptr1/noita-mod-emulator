@@ -1,7 +1,7 @@
 {
   "name": "noita-mod-emulator",
   "description": "Run and debug Noita mods programmatically outside of the game.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": {
     "name": "zptr1",
     "url": "https://yui.dev"
@@ -19,6 +19,7 @@
     "src"
   ],
   "scripts": {
+    "watch": "node scripts/bundle.mjs watch",
     "build": "node scripts/bundle.mjs",
     "build:lua": "node scripts/build-lua.mjs",
     "prepublishOnly": "npm run build",

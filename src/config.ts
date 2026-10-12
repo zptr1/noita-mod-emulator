@@ -25,6 +25,7 @@ export const config = {
   enableBiomeMap: true,
   enableGUI: false,
 
+  dataWakOnly: false,
   collectFileLog: false,
   luaUnsafeLibs: false,
 };

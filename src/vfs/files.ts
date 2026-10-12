@@ -59,3 +59,12 @@ export function setFile(path: string, content: string, blame?: string) {
 };
 
 export const fileExists = (path: string) => files.has(resolvePath(path));
+
+export function loadAllUnreadFiles() {
+  for (const file of unreadFiles) {
+    if (files.has(file) || strFiles.has(file)) continue;
+    files.set(file, readFileSync(realFilePath.get(file)!));
+  }
+
+  unreadFiles.clear();
+}

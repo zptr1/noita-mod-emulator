@@ -2,7 +2,7 @@ import { arrayToLua, resolvePath } from "./lib/util";
 import { join as pjoin } from "node:path";
 import { LuaLibName } from "lua-state";
 
-export const VERSION = "0.0.1";
+export const VERSION = "0.0.2";
 
 // This string will be reported as an enabled mod or a setting
 export const EMULATOR = "NOITA_EMULATOR";

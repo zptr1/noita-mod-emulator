@@ -61,32 +61,25 @@ function formatReplObject(obj: any, depth = 0, circular = new Set<any>()) {
   return out.join(" ") + " }";
 }
 
-function initReplCommands() {
-  if (!server) return;
-  for (const command in server.commands) {
-    if (command == "help") continue;
-
-    // Why is this a "NodeJS.ReadOnlyDict" when you can delete from it?..
-    delete (server.commands as any)[command];
-  }
-
-  // annoying
-  const penis = () => server?.displayPrompt();
-
-  server.defineCommand("load", {
-    help: "Load a mod ID or path (available only before any execution)",
-    action(mod) {
-      mod = mod.trim();
-      wrapError(() => {
-        if (!mod) throw "Missing mod ID or path";
-        load([mod]);
-      });
-
-      penis();
+function addCommand(name: string, help: string, action: (arg: string) => void) {
+  server!.defineCommand(name, {
+    help,
+    action(arg) {
+      wrapError(() => action(arg.trim()));
+      server!.displayPrompt();
     }
   });
+}
 
-  server.defineCommand("mods", {
+const commands = {
+  load: {
+    help: "Load a mod ID or path (available only before any execution)",
+    action(mod: string) {
+      if (!mod) throw "Missing mod ID or path";
+      load([mod]);
+    }
+  },
+  mods: {
     help: "Show all available mods and loaded mods",
     action() {
       console.log("Active mods: (in order)");
@@ -99,60 +92,42 @@ function initReplCommands() {
           .map((x) => cl.green(x.id))
           .join(", ")
       );
-
-      penis();
     }
-  });
-
-  server.defineCommand("start", {
+  },
+  start: {
     help: "Start execution",
     action() {
-      wrapError(runSettings);
+      runSettings();
       console.log(cl.bold("Use .next to run the next hook"));
       console.log(cl.bold("Use .all to run all hooks in order"));
-      penis();
     }
-  });
-
-  server.defineCommand("next", {
+  },
+  next: {
     help: "Run the next hook",
     action() {
-      wrapError(() => {
-        const hook = hooks.shift();
-        if (!hook) throw `Execution finished`;
+      const hook = hooks.shift();
+      if (!hook) throw `Execution finished`;
 
-        console.log(cl.bold(`Running hook ${hook}`));
-        runHook(hook);
-      });
-
-      penis();
+      console.log(cl.bold(`Running hook ${hook}`));
+      runHook(hook);
     }
-  });
-
-  server.defineCommand("all", {
+  },
+  all: {
     help: "Run all hooks in order",
     action() {
-      wrapError(() => {
-        if (!hooks.length) throw `Execution finished`;
-        while (hooks.length) {
-          const hook = hooks.shift()!;
-          console.log(cl.bold(`Running hook ${hook}`));
-          runHook(hook);
-        }
-      });
-
-      penis();
+      if (!hooks.length) throw `Execution finished`;
+      while (hooks.length) {
+        const hook = hooks.shift()!;
+        console.log(cl.bold(`Running hook ${hook}`));
+        runHook(hook);
+      }
     }
-  });
-
-  server.defineCommand("ctx", {
+  },
+  ctx: {
     help: "Change the current context (run the command to see a list of available contexts)",
-    action(id) {
-      id = id.trim();
-
+    action(id: string) {
       if (id == "vanilla") {
-        setCtx(gameCtx);
-        return penis();
+        return setCtx(gameCtx);
       }
 
       const mod = activeModsById.get(id);
@@ -165,10 +140,32 @@ function initReplCommands() {
           console.log(" -", cl.green(mod.id));
         }
       }
-
-      penis();
     }
-  })
+  }
+}
+
+function initReplCommands() {
+  if (!server) return;
+  for (const command in server.commands) {
+    if (command == "help") continue;
+
+    // Why is this a "NodeJS.ReadOnlyDict" when you can delete from it?..
+    delete (server.commands as any)[command];
+  }
+
+  for (const name in commands) {
+    const { help, action } = commands[name];
+    server.defineCommand(name, {
+      help,
+      action(arg) {
+        wrapError(() => {
+          action(arg.trim());
+        });
+        
+        server?.prompt();
+      }
+    });
+  }
 }
 
 export function startRepl(opts: any, args: any[]) {

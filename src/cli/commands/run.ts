@@ -11,16 +11,18 @@ export async function runCommand(opts: any, args: any[]) {
     true
   );
 
-  try {
-    run();
-  } catch {
-    // This should only error if the fatalErrors setting is set;
-    // in which case the error is already printed.
-    process.exit(1);
-  }
-
-  if (opts.gui) {
-    startRenderLoop();
+  if (!opts.vfsOnly) {
+    try {
+      run();
+    } catch {
+      // This should only error if the fatalErrors setting is set;
+      // in which case the error is already printed.
+      process.exit(1);
+    }
+  
+    if (opts.gui) {
+      startRenderLoop();
+    }
   }
 
   console.log();

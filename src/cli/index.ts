@@ -25,15 +25,18 @@ program
 
   .option(
     "--save-vfs <dir>",
-    "Dump the virtual filesystem to a directory. Will only contain files that have been accessed.",
+    "Dump the virtual filesystem to a directory. Will only contain files that have been accessed. "
+    + "Virtual images will get exported as PNG",
     validOutDir
   )
+  .option("--save-vfs-full <dir>", "Same as --save-vfs, but saves all files")
   .option("--save-vfs-log <path>", "Export the log of all file changes; does not include contents (txt/log/json)", outFileWithExt("txt", "log", "json"))
   .option("--save-reflection <path>", "Export reflection data like spells, perks, status effects (yaml/json)", outFileWithExt("yaml", "json"))
   .option("--save-misc <path>", "Export mod settings, run flags, lua appends, etc (yaml/json)", outFileWithExt("yaml", "json"))
   .option("--save-biome-map <path>", "Export the generated biome map (png)", outFileWithExt("png"))
   .option("--save-locale <path>", "Export the locale file (csv/yaml/json)", outFileWithExt("csv", "json", "yaml"))
-  .option("--save-lua-globals <path>", "Export all lua globals (json/yaml)\n", outFileWithExt("json", "yaml"))
+  .option("--save-lua-globals <path>", "Export all lua globals (json/yaml)", outFileWithExt("json", "yaml"))
+  .option("--save-wak <path>", "Generates a new .wak archive from the VFS\n", outFileWithExt("wak"))
 
   .option("--locale <code>", "Change the locale ('en' by default)", validLocale)
   .option("--translate-reflection", "Resolve translation keys in the exported reflection data (--save-reflection)\n")
@@ -47,6 +50,8 @@ program
 
   .option("--settings <json>", `Apply custom mod settings using a JSON (${cl.gray(`{"key":value}`)})`, validJSON)
   .option("--stop-after <hook>", "Stop execution after this hook", validHook)
+  .option("--vfs-only", "Load VFS only without running any Lua (useful for exporting the VFS/.wak)")
+  .option("--wak-only", "Load data.wak only and ignore everything else in the data folder")
   .option("--unsafe-api", `Enable ${cl.redBright("unsafe API")} for all mods (io, os, ...)\n`)
 
   .option("--no-rng", "Disable PRNG emulation")

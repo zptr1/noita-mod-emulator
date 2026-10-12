@@ -1,5 +1,5 @@
 import { printWarn } from "../log";
-import { getFileBinary } from "../vfs";
+import { files, getFileBinary, strFiles } from "../vfs";
 import { resolvePath } from "./util";
 import { PNG } from "pngjs";
 import sharp from "sharp";
@@ -80,6 +80,18 @@ export async function encodeImageToPNG(img: Img) {
       channels: 4
     }
   }).png().toBuffer();
+}
+
+// TODO: I was considering changing Reflect.exportVfs to make it cleaner (and more similar to exporting .wak)
+// But I kinda realized that will make it harder to avoid exported unaccessed files
+// Should it *always* export all files, even if unaccessed?
+export async function encodeAllImagesToVFS() {
+  for (const img of imageFiles) {
+    if (!img.path) continue;
+    if (strFiles.has(img.path)) strFiles.delete(img.path);
+    
+    files.set(img.path, await encodeImageToPNG(img));
+  }
 }
 
 export function putImage(
